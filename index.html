@@ -538,7 +538,8 @@ select:focus{
 .victory-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.95);
+  background: radial-gradient(ellipse at center, rgba(220, 20, 60, 0.15) 0%, rgba(0, 0, 0, 0.97) 70%);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -553,18 +554,32 @@ select:focus{
 
 .victory-card {
   position: relative;
-  background: linear-gradient(180deg, #1a0a0a, #0a0505);
-  border: 3px solid #dc143c;
-  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(26, 10, 10, 0.98) 0%, rgba(10, 5, 5, 0.98) 50%, rgba(18, 6, 18, 0.98) 100%);
+  border: 3px solid transparent;
+  border-radius: 20px;
   padding: 0;
   max-width: 1000px;
   width: 95%;
   text-align: center;
-  box-shadow: 0 0 50px rgba(220, 20, 60, 0.6), inset 0 0 30px rgba(220, 20, 60, 0.1);
+  box-shadow: 0 20px 80px rgba(220, 20, 60, 0.4), 0 0 2px rgba(220, 20, 60, 0.8), inset 0 0 40px rgba(220, 20, 60, 0.08);
   animation: victoryScale 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   overflow: hidden;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+.victory-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.8;
+  pointer-events: none;
 }
 
 @keyframes victoryScale {
@@ -579,21 +594,36 @@ select:focus{
 }
 
 .victory-header {
-  background: linear-gradient(180deg, #dc143c, #a01030);
-  padding: 20px;
-  border-bottom: 2px solid #ff4757;
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.3) 0%, rgba(0, 71, 171, 0.2) 50%, rgba(220, 20, 60, 0.3) 100%);
+  padding: 24px;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, #dc143c 0%, #0047ab 50%, #dc143c 100%) 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+}
+
+.victory-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(0, 71, 171, 0.05));
+  pointer-events: none;
 }
 
 .victory-header h2 {
   margin: 0;
   font-size: 42px;
   font-weight: 900;
-  color: #ff4757;
-  text-shadow: 0 0 20px rgba(255, 71, 87, 0.8), 0 4px 10px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(135deg, #ff4757 0%, #0084ff 50%, #ff4757 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(255, 71, 87, 0.6));
   letter-spacing: 3px;
+  position: relative;
+  z-index: 1;
 }
 
 .victory-count {
@@ -619,8 +649,8 @@ select:focus{
 }
 
 .victory-item {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.2));
-  border: 2px solid rgba(255, 0, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.3) 100%);
+  border: 2px solid transparent;
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -628,6 +658,21 @@ select:focus{
   align-items: center;
   transition: all 0.15s ease;
   animation: victoryItemAppear 0.2s ease-out backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.victory-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.4) 0%, rgba(0, 71, 171, 0.4) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 @keyframes victoryItemAppear {
@@ -650,8 +695,11 @@ select:focus{
 
 .victory-item:hover {
   transform: translateY(-5px);
-  border-color: rgba(255, 0, 0, 0.6);
-  box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(220, 20, 60, 0.5), 0 0 20px rgba(0, 71, 171, 0.3);
+}
+
+.victory-item:hover::before {
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.7) 0%, rgba(0, 71, 171, 0.7) 100%);
 }
 
 .victory-image-container {
@@ -659,22 +707,36 @@ select:focus{
   width: 180px;
   height: 180px;
   margin-bottom: 15px;
-  background: linear-gradient(135deg, #ff0000, #dc143c);
-  border: 2px solid #ff0000;
+  background: linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(0, 71, 171, 0.2) 100%);
+  border: 2px solid transparent;
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6), inset 0 0 20px rgba(255, 0, 0, 0.1);
+  box-shadow: 0 0 25px rgba(220, 20, 60, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.3);
   animation: victoryImagePulse 2s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.victory-image-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 @keyframes victoryImagePulse {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 25px rgba(220, 20, 60, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.3);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 35px rgba(220, 20, 60, 0.6), 0 0 20px rgba(0, 71, 171, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -872,7 +934,7 @@ select:focus{
     <div class="header">
       <div class="header-left">
         <h1 class="title">The Five Borough Illegal Civ</h1>
-        <div class="subtitle">Spin System</div>
+        <div class="subtitle">Illegal Civ</div>
 
         <div class="topnav" id="mainNav">
           <div class="cat active" data-tab="testdrops"><i class="fa-solid fa-bullseye"></i>&nbsp;Test Drops</div>
@@ -1627,23 +1689,25 @@ async function renderGrid(){
   if(activeTab === 'schemes'){
     contentArea.innerHTML = `
       <div style="max-width:1000px; margin:0 auto; padding:24px;">
-        <div style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.4)); border:2px solid var(--glass-border); border-radius:16px; padding:32px; backdrop-filter:blur(12px);">
-          <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center;">
+        <div style="background:linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(10, 5, 20, 0.95) 50%, rgba(10, 10, 26, 0.95) 100%); border:3px solid transparent; border-radius:20px; padding:32px; backdrop-filter:blur(12px); box-shadow: 0 10px 40px rgba(220, 20, 60, 0.3), inset 0 0 50px rgba(0, 0, 0, 0.5); position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; padding:3px; border-radius:20px; background:linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity:0.6; pointer-events:none;"></div>
+          <h2 style="color:var(--text); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center; background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.5)); position:relative; z-index:1;">
             <i class="fa-solid fa-file-pen"></i> Illegal Civilian Scheme Submission Guidelines
           </h2>
           
           <div style="color:var(--text); line-height:1.8; font-size:16px;">
-            <div style="background:rgba(220,20,60,.1); border:2px solid var(--accent); border-radius:10px; padding:20px; margin-bottom:28px;">
-              <p style="margin:0 0 16px 0; font-weight:700; font-size:18px;">
+            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(0, 71, 171, 0.15) 100%); border:2px solid transparent; border-radius:12px; padding:24px; margin-bottom:28px; position:relative; overflow:hidden;">
+              <div style="position:absolute; inset:0; padding:2px; border-radius:12px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.6) 0%, rgba(0, 71, 171, 0.6) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;"></div>
+              <p style="margin:0 0 16px 0; font-weight:700; font-size:18px; position:relative; z-index:1;">
                 Welcome to the thread submission channel for your illegal civilian schemes! This is where all <strong style="color:var(--accent);">Scammer</strong>, <strong style="color:var(--accent);">Racer</strong>, and <strong style="color:var(--accent);">Drug Dealer</strong> threads must begin.
               </p>
-              <p style="margin:0; color:var(--muted);">
+              <p style="margin:0; color:var(--muted); position:relative; z-index:1;">
                 Please read the guidelines carefully before submitting.
               </p>
             </div>
 
-            <div style="margin-bottom:28px;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+            <div style="margin-bottom:28px; position:relative; z-index:1;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:8px;">
                 <i class="fa-solid fa-check-circle"></i> Submission Requirements
               </h3>
               <p style="margin-bottom:16px; color:var(--muted);">
@@ -1677,8 +1741,8 @@ async function renderGrid(){
               </ul>
             </div>
 
-            <div style="margin-bottom:24px;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+            <div style="margin-bottom:24px; position:relative; z-index:1;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:8px;">
                 <i class="fa-solid fa-arrow-right"></i> What Happens Next? (Ticket System)
               </h3>
               <ul style="list-style:none; padding:0; margin:0;">
@@ -1706,7 +1770,7 @@ async function renderGrid(){
               </ul>
             </div>
 
-            <div style="background:rgba(220,20,60,.15); border-left:4px solid var(--accent); padding:20px; border-radius:8px; margin-top:32px;">
+            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(0, 71, 171, 0.15) 100%); border-left:4px solid transparent; border-image:linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding:20px; border-radius:8px; margin-top:32px; position:relative; z-index:1;">
               <p style="margin:0; font-weight:700; font-size:18px;">
                 <i class="fa-solid fa-lightbulb"></i> <strong>Reminder:</strong>
               </p>
@@ -1726,14 +1790,15 @@ async function renderGrid(){
   if(activeTab === 'spot'){
     contentArea.innerHTML = `
       <div style="max-width:1100px; margin:0 auto; padding:24px;">
-        <div style="background:linear-gradient(135deg,rgba(220,20,60,.15),rgba(0,71,171,.1)); border:3px solid var(--accent); border-radius:20px; padding:40px; backdrop-filter:blur(16px); box-shadow: 0 0 40px rgba(220,20,60,0.3), inset 0 0 60px rgba(0,0,0,0.4);">
+        <div style="background:linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(10, 5, 20, 0.95) 50%, rgba(10, 10, 26, 0.95) 100%); border:3px solid transparent; border-radius:20px; padding:40px; backdrop-filter:blur(16px); box-shadow: 0 10px 40px rgba(220,20,60,0.3), inset 0 0 50px rgba(0,0,0,0.5); position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; padding:3px; border-radius:20px; background:linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity:0.6; pointer-events:none;"></div>
           
           <!-- Header Section -->
-          <div style="text-align:center; margin-bottom:36px; border-bottom:2px solid var(--accent); padding-bottom:28px;">
+          <div style="text-align:center; margin-bottom:36px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:28px; position:relative; z-index:1;">
             <div style="font-size:14px; color:var(--accent); font-weight:800; letter-spacing:3px; margin-bottom:12px;">
               <i class="fa-solid fa-bullhorn"></i> OFFICIAL ANNOUNCEMENT
             </div>
-            <h2 style="color:var(--text); font-weight:900; font-size:42px; margin:0; text-shadow:0 0 20px rgba(220,20,60,0.5);">
+            <h2 style="color:var(--text); font-weight:900; font-size:42px; margin:0; background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.5));">
               <i class="fa-solid fa-location-dot" style="color:var(--accent);"></i> The Spot
             </h2>
             <div style="color:var(--muted); font-size:18px; margin-top:12px; font-weight:700;">
@@ -1890,8 +1955,9 @@ async function renderGrid(){
             </div>
 
             <!-- Closing Statement -->
-            <div style="background:linear-gradient(135deg, rgba(220,20,60,0.2), rgba(0,71,171,0.15)); border:3px solid var(--accent); border-radius:16px; padding:32px; text-align:center; box-shadow:0 0 30px rgba(220,20,60,0.3);">
-              <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin:0 0 20px 0; text-shadow:0 0 15px rgba(220,20,60,0.6);">
+            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(0, 71, 171, 0.15) 100%); border:3px solid transparent; border-radius:16px; padding:32px; text-align:center; box-shadow:0 10px 30px rgba(220,20,60,0.3); position:relative; overflow:hidden;">
+              <div style="position:absolute; inset:0; padding:3px; border-radius:16px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.7) 0%, rgba(0, 71, 171, 0.7) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;"></div>
+              <h2 style="background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.6)); font-weight:900; font-size:32px; margin:0 0 20px 0; position:relative; z-index:1;">
                 Welcome to The Spot
               </h2>
               <div style="font-size:19px; color:var(--text); font-weight:700; line-height:1.8; margin-bottom:24px;">
@@ -1899,7 +1965,7 @@ async function renderGrid(){
                 <div style="margin-bottom:8px;"><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Stay lowkey.</div>
                 <div><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Earn your lane.</div>
               </div>
-              <div style="color:var(--muted); font-size:16px; font-weight:600; margin-top:24px; padding-top:20px; border-top:2px solid rgba(220,20,60,0.3);">
+              <div style="color:var(--muted); font-size:16px; font-weight:600; margin-top:24px; padding-top:20px; border-top:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; position:relative; z-index:1;">
                 — Adxt & Walking
               </div>
             </div>
@@ -1915,8 +1981,9 @@ async function renderGrid(){
   if(activeTab === 'roe'){
     contentArea.innerHTML = `
       <div style="max-width:1000px; margin:0 auto; padding:24px;">
-        <div style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.4)); border:2px solid var(--glass-border); border-radius:16px; padding:32px; backdrop-filter:blur(12px);">
-          <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center;">
+        <div style="background:linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(10, 5, 20, 0.95) 50%, rgba(10, 10, 26, 0.95) 100%); border:3px solid transparent; border-radius:20px; padding:32px; backdrop-filter:blur(12px); box-shadow: 0 10px 40px rgba(220, 20, 60, 0.3), inset 0 0 50px rgba(0, 0, 0, 0.5); position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; padding:3px; border-radius:20px; background:linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity:0.6; pointer-events:none;"></div>
+          <h2 style="color:var(--text); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center; background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.5)); position:relative; z-index:1;">
             <i class="fa-solid fa-scale-balanced"></i> TFB:RP Illegal Civilian Rules of Engagement
           </h2>
           
@@ -1938,8 +2005,9 @@ async function renderGrid(){
               </ul>
             </div>
 
-            <div style="margin-bottom:28px; background:rgba(220,20,60,.1); border:2px solid var(--accent); border-radius:10px; padding:20px;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:20px; margin-bottom:14px;">
+            <div style="margin-bottom:28px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(0, 71, 171, 0.15) 100%); border:2px solid transparent; border-radius:12px; padding:20px; position:relative; overflow:hidden;">
+              <div style="position:absolute; inset:0; padding:2px; border-radius:12px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.6) 0%, rgba(0, 71, 171, 0.6) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;"></div>
+              <h3 style="color:var(--accent); font-weight:800; font-size:20px; margin-bottom:14px; position:relative; z-index:1;">
                 <i class="fa-solid fa-bullseye"></i> Attack Limits
               </h3>
               <ul style="list-style:none; padding:0; margin:0;">
@@ -1958,8 +2026,8 @@ async function renderGrid(){
               </ul>
             </div>
 
-            <div style="margin-bottom:24px;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+            <div style="margin-bottom:24px; position:relative; z-index:1;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:8px;">
                 <i class="fa-solid fa-exclamation-triangle"></i> Important Rules
               </h3>
               <ul style="list-style:none; padding:0; margin:0;">
@@ -2002,7 +2070,7 @@ async function renderGrid(){
               </ul>
             </div>
 
-            <div style="background:rgba(220,20,60,.15); border-left:4px solid var(--accent); padding:20px; border-radius:8px; margin-top:32px;">
+            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(0, 71, 171, 0.15) 100%); border-left:4px solid transparent; border-image:linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding:20px; border-radius:8px; margin-top:32px; position:relative; z-index:1;">
               <p style="margin:0; font-weight:700; font-size:18px;">
                 <i class="fa-solid fa-triangle-exclamation"></i> <strong>Remember:</strong>
               </p>
