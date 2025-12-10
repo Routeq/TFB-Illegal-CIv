@@ -510,6 +510,7 @@ select{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.04); colo
         <div class="topnav" id="mainNav">
           <div class="cat active" data-tab="testdrops"><i class="fa-solid fa-bullseye"></i>&nbsp;Test Drops</div>
           <div class="cat" data-tab="drugs"><i class="fa-solid fa-capsules"></i>&nbsp;Drugs</div>
+          <div class="cat" data-tab="roe"><i class="fa-solid fa-book"></i>&nbsp;ROE</div>
         </div>
 
         <div class="subtabs" id="subtabs"></div>
@@ -937,7 +938,8 @@ function loadAdmin(){ const cfg = loadCfg(); adminWebhook.value = cfg.webhook||'
 /* ---------- subtabs sets ---------- */
 const SUBTABS = {
   testdrops: ['All','Pistols','SMG'],
-  drugs: ['All','Common','Rare']
+  drugs: ['All','Common','Rare'],
+  roe: ['All']
 };
 function renderSubtabs(tab){
   subtabsEl.innerHTML = '';
@@ -1020,6 +1022,104 @@ function createCard(item){
 /* render grid */
 function renderGrid(){
   const nodes = itemsForTab(activeTab);
+
+  // Handle ROE tab
+  if(activeTab === 'roe'){
+    contentArea.innerHTML = `
+      <div style="max-width:900px; margin:0 auto; padding:24px;">
+        <div style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.4)); border:2px solid var(--glass-border); border-radius:16px; padding:32px; backdrop-filter:blur(12px);">
+          <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center;">
+            <i class="fa-solid fa-scale-balanced"></i> Rules of Engagement
+          </h2>
+          
+          <div style="color:var(--text); line-height:1.8; font-size:16px;">
+            <div style="margin-bottom:32px;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+                <i class="fa-solid fa-shield-halved"></i> General Rules
+              </h3>
+              <ul style="list-style:none; padding:0; margin:0;">
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Respect all players:</strong> No harassment, racism, or toxicity will be tolerated.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>No RDM (Random Deathmatch):</strong> All kills must be justified through roleplay.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Stay in character:</strong> Maintain immersion at all times during roleplay.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>No metagaming:</strong> Use only in-character knowledge during gameplay.
+                </li>
+              </ul>
+            </div>
+
+            <div style="margin-bottom:32px;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+                <i class="fa-solid fa-gun"></i> Combat Rules
+              </h3>
+              <ul style="list-style:none; padding:0; margin:0;">
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Initiation required:</strong> Proper roleplay must occur before engaging in combat.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>New Life Rule:</strong> After respawn, you forget your previous death and circumstances.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>No combat logging:</strong> Do not disconnect during or immediately after combat.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Fair play:</strong> No exploiting, glitching, or using third-party advantages.
+                </li>
+              </ul>
+            </div>
+
+            <div style="margin-bottom:32px;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+                <i class="fa-solid fa-handshake"></i> Expectations
+              </h3>
+              <ul style="list-style:none; padding:0; margin:0;">
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Quality roleplay:</strong> Create engaging and realistic scenarios for all involved.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Value your life:</strong> Act as you would in real life - fear for your character's safety.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Cooperation:</strong> Work with staff and follow their instructions promptly.
+                </li>
+                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong>Communication:</strong> Use proper channels for OOC discussions and reports.
+                </li>
+              </ul>
+            </div>
+
+            <div style="background:rgba(220,20,60,.15); border-left:4px solid var(--accent); padding:20px; border-radius:8px; margin-top:32px;">
+              <p style="margin:0; font-weight:700; font-size:18px;">
+                <i class="fa-solid fa-triangle-exclamation"></i> <strong>Important:</strong>
+              </p>
+              <p style="margin:8px 0 0 0; color:var(--muted);">
+                Breaking these rules may result in warnings, kicks, temporary bans, or permanent bans depending on severity. 
+                Staff decisions are final. If you have concerns, open a ticket in Discord.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   contentArea.innerHTML = `<div class="grid-wrap"><div class="grid" id="itemGrid" aria-live="polite"></div></div>`;
   itemGrid = document.getElementById('itemGrid');
@@ -1331,4 +1431,3 @@ document.querySelectorAll('.modal-overlay').forEach(m=> m.addEventListener('clic
 </script>
 </body>
 </html>
-
