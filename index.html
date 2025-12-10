@@ -1985,6 +1985,8 @@ function showNewThreadModal(username) {
 
     let videoUrl = null;
     let videoType = null;
+    
+    // Show loading if video present
     if(videoFile) {
       if(videoFile.size > 50 * 1024 * 1024) {
         errorDiv.textContent = 'Video file too large (max 50MB)';
@@ -1992,48 +1994,65 @@ function showNewThreadModal(username) {
         return;
       }
       
-      // Show loading
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Uploading...';
+      errorDiv.style.display = 'none';
       
       try {
-        // Convert video to base64
-        const reader = new FileReader();
         videoUrl = await new Promise((resolve, reject) => {
-          reader.onload = (e) => resolve(e.target.result);
-          reader.onerror = (e) => reject(e);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if(e.target && e.target.result) {
+              resolve(e.target.result);
+            } else {
+              reject(new Error('Failed to read file'));
+            }
+          };
+          reader.onerror = () => reject(new Error('File read error'));
           reader.readAsDataURL(videoFile);
         });
         videoType = videoFile.type;
       } catch(e) {
-        errorDiv.textContent = 'Failed to upload video. Please try again.';
+        console.error('Video upload error:', e);
+        errorDiv.textContent = 'Failed to upload video: ' + (e.message || 'Unknown error');
         errorDiv.style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Submit Thread';
         return;
       }
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
     }
 
-    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-    const threadId = 'thread_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    
-    const thread = {
-      id: threadId,
-      title,
-      schemeType,
-      threadType,
-      author: username,
-      date: new Date().toISOString(),
-      videoUrl,
-      videoType,
-      comments: []
-    };
+    try {
+      const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
+      const threadId = 'thread_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      
+      const thread = {
+        id: threadId,
+        title,
+        schemeType,
+        threadType,
+        author: username,
+        date: new Date().toISOString(),
+        videoUrl,
+        videoType,
+        comments: []
+      };
 
-    threads.unshift(thread);
-    localStorage.setItem('forum_threads', JSON.stringify(threads));
-    
-    modal.remove();
-    renderGrid();
+      threads.unshift(thread);
+      localStorage.setItem('forum_threads', JSON.stringify(threads));
+      
+      modal.remove();
+      renderGrid();
+    } catch(e) {
+      console.error('Thread creation error:', e);
+      errorDiv.textContent = 'Failed to create thread. Please try again.';
+      errorDiv.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Submit Thread';
+    }
   });
 
   modal.addEventListener('click', (e) => {
@@ -2095,7 +2114,13 @@ function showThreadModal(thread) {
         ${currentUser ? `
           <div style="background:rgba(255,255,255,.02); border:1px solid var(--glass-border); border-radius:8px; padding:16px; margin-bottom:20px;">
             <textarea id="newComment" placeholder="Add your comment..." style="width:100%; min-height:80px; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; resize:vertical; margin-bottom:12px;"></textarea>
-            <div style="text-align:right;">
+            <div style="margin-bottom:12px;">
+              <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px; font-size:14px;">Attach Video (Optional)</label>
+              <input type="file" id="commentVideo" accept="video/*" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; font-size:13px;">
+              <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 30MB for comments</div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+              <button class="btn" id="clearComment"><i class="fa-solid fa-eraser"></i>&nbsp;Clear</button>
               <button class="btn drop" id="postComment"><i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment</button>
             </div>
           </div>
@@ -2112,7 +2137,9 @@ function showThreadModal(thread) {
               <i class="fa-solid fa-comment-slash" style="font-size:36px; display:block; margin-bottom:12px; opacity:0.5;"></i>
               <div>No comments yet. Be the first to comment!</div>
             </div>
-          ` : comments.map((comment, idx) => `
+          ` : comments.map((comment, idx) => {
+            const commentVideoType = comment.videoType ? `type="${comment.videoType}"` : 'type="video/mp4"';
+            return `
             <div class="comment-item" data-idx="${idx}" style="background:rgba(255,255,255,.02); border-left:3px solid var(--accent); border-radius:8px; padding:16px; margin-bottom:12px;">
               <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
                 <div>
@@ -2127,9 +2154,19 @@ function showThreadModal(thread) {
                   </div>
                 ` : ''}
               </div>
-              <div class="comment-text" style="color:var(--text); line-height:1.6; white-space:pre-wrap;">${comment.text}</div>
+              <div class="comment-text" style="color:var(--text); line-height:1.6; white-space:pre-wrap; margin-bottom:${comment.videoUrl ? '12px' : '0'};">${comment.text}</div>
+              ${comment.videoUrl ? `
+                <div style="background:rgba(0,0,0,.4); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-top:12px;">
+                  <div style="color:var(--muted); font-size:12px; margin-bottom:8px;"><i class="fa-solid fa-video"></i> Attached Video</div>
+                  <video controls style="width:100%; max-height:300px; border-radius:6px; background:#000;">
+                    <source src="${comment.videoUrl}" ${commentVideoType}>
+                    Your browser does not support video playback.
+                  </video>
+                </div>
+              ` : ''}
             </div>
-          `).join('')}
+          `;
+          }).join('')}
         </div>
       </div>
 
@@ -2144,25 +2181,87 @@ function showThreadModal(thread) {
   document.getElementById('closeViewThreadBtn').addEventListener('click', () => modal.remove());
   
   if(currentUser) {
-    document.getElementById('postComment').addEventListener('click', () => {
+    document.getElementById('clearComment').addEventListener('click', () => {
+      document.getElementById('newComment').value = '';
+      document.getElementById('commentVideo').value = '';
+    });
+
+    document.getElementById('postComment').addEventListener('click', async () => {
       const commentText = document.getElementById('newComment').value.trim();
-      if(!commentText) return;
+      const videoFile = document.getElementById('commentVideo').files[0];
+      const postBtn = document.getElementById('postComment');
       
-      const newComment = {
-        author: currentUser.username,
-        text: commentText,
-        date: new Date().toISOString(),
-        edited: false
-      };
+      if(!commentText && !videoFile) {
+        alert('Please enter a comment or attach a video');
+        return;
+      }
       
-      const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-      const threadIndex = threads.findIndex(t => t.id === thread.id);
-      if(threadIndex !== -1) {
-        if(!threads[threadIndex].comments) threads[threadIndex].comments = [];
-        threads[threadIndex].comments.push(newComment);
-        localStorage.setItem('forum_threads', JSON.stringify(threads));
-        modal.remove();
-        showThreadModal(threads[threadIndex]);
+      let videoUrl = null;
+      let videoType = null;
+      
+      if(videoFile) {
+        if(videoFile.size > 30 * 1024 * 1024) {
+          alert('Video file too large (max 30MB for comments)');
+          return;
+        }
+        
+        postBtn.disabled = true;
+        postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Uploading...';
+        
+        try {
+          videoUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              if(e.target && e.target.result) {
+                resolve(e.target.result);
+              } else {
+                reject(new Error('Failed to read file'));
+              }
+            };
+            reader.onerror = () => reject(new Error('File read error'));
+            reader.readAsDataURL(videoFile);
+          });
+          videoType = videoFile.type;
+        } catch(e) {
+          console.error('Video upload error:', e);
+          alert('Failed to upload video: ' + (e.message || 'Unknown error'));
+          postBtn.disabled = false;
+          postBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment';
+          return;
+        }
+      } else {
+        postBtn.disabled = true;
+        postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
+      }
+      
+      try {
+        const newComment = {
+          author: currentUser.username,
+          text: commentText || '(Video only)',
+          date: new Date().toISOString(),
+          edited: false,
+          videoUrl,
+          videoType
+        };
+        
+        const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
+        const threadIndex = threads.findIndex(t => t.id === thread.id);
+        if(threadIndex !== -1) {
+          if(!threads[threadIndex].comments) threads[threadIndex].comments = [];
+          threads[threadIndex].comments.push(newComment);
+          localStorage.setItem('forum_threads', JSON.stringify(threads));
+          modal.remove();
+          showThreadModal(threads[threadIndex]);
+        } else {
+          alert('Thread not found. It may have been deleted.');
+          postBtn.disabled = false;
+          postBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment';
+        }
+      } catch(e) {
+        console.error('Comment posting error:', e);
+        alert('Failed to post comment. Please try again.');
+        postBtn.disabled = false;
+        postBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment';
       }
     });
   }
@@ -2173,37 +2272,68 @@ function showThreadModal(thread) {
 }
 
 function editComment(threadId, commentIdx) {
-  const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-  const thread = threads.find(t => t.id === threadId);
-  if(!thread || !thread.comments[commentIdx]) return;
-  
-  const comment = thread.comments[commentIdx];
-  const newText = prompt('Edit your comment:', comment.text);
-  
-  if(newText !== null && newText.trim()) {
-    comment.text = newText.trim();
-    comment.edited = true;
-    localStorage.setItem('forum_threads', JSON.stringify(threads));
+  try {
+    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
+    const threadIndex = threads.findIndex(t => t.id === threadId);
+    if(threadIndex === -1 || !threads[threadIndex].comments || !threads[threadIndex].comments[commentIdx]) {
+      alert('Comment not found');
+      return;
+    }
     
-    // Refresh modal
-    document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
-    showThreadModal(thread);
+    const comment = threads[threadIndex].comments[commentIdx];
+    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
+    
+    if(!currentUser || currentUser.username !== comment.author) {
+      alert('You can only edit your own comments');
+      return;
+    }
+    
+    const newText = prompt('Edit your comment:', comment.text === '(Video only)' ? '' : comment.text);
+    
+    if(newText !== null && newText.trim()) {
+      comment.text = newText.trim();
+      comment.edited = true;
+      localStorage.setItem('forum_threads', JSON.stringify(threads));
+      
+      // Refresh modal
+      document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+      showThreadModal(threads[threadIndex]);
+    }
+  } catch(e) {
+    console.error('Edit comment error:', e);
+    alert('Failed to edit comment');
   }
 }
 
 function deleteComment(threadId, commentIdx) {
   if(!confirm('Are you sure you want to delete this comment?')) return;
   
-  const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-  const thread = threads.find(t => t.id === threadId);
-  if(!thread || !thread.comments[commentIdx]) return;
-  
-  thread.comments.splice(commentIdx, 1);
-  localStorage.setItem('forum_threads', JSON.stringify(threads));
-  
-  // Refresh modal
-  document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
-  showThreadModal(thread);
+  try {
+    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
+    const threadIndex = threads.findIndex(t => t.id === threadId);
+    if(threadIndex === -1 || !threads[threadIndex].comments || !threads[threadIndex].comments[commentIdx]) {
+      alert('Comment not found');
+      return;
+    }
+    
+    const comment = threads[threadIndex].comments[commentIdx];
+    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
+    
+    if(!currentUser || currentUser.username !== comment.author) {
+      alert('You can only delete your own comments');
+      return;
+    }
+    
+    threads[threadIndex].comments.splice(commentIdx, 1);
+    localStorage.setItem('forum_threads', JSON.stringify(threads));
+    
+    // Refresh modal
+    document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+    showThreadModal(threads[threadIndex]);
+  } catch(e) {
+    console.error('Delete comment error:', e);
+    alert('Failed to delete comment');
+  }
 }
 
 // Start immediately
