@@ -725,6 +725,20 @@ const WEAPON_STATS = {
   'Taurus Civilian': { damage: 25, fire: 720, ammo: '9mm', magStd: 15, magExt: 30 }
 };
 
+/* ---------------- DRUG PRICES ---------------- */
+const DRUG_PRICES = {
+  'Weed': { price: '$200–$750' },
+  'Shrooms': { price: '$500–$750' },
+  'Xanax': { price: '$700–$1,100' },
+  'Perc 20s': { price: '$700–$1,000' },
+  'Perc 30s': { price: '$1,200–$2,500' },
+  'Green': { price: '$900–$1,800' },
+  'Tris': { price: '$2,000–$3,500' },
+  'Quagen': { price: '$3,500–$6,500' },
+  'Wockhardt': { price: '$4,000–$7,000' },
+  'PCP': { price: '$7,000–$10,000' }
+};
+
 /* ---------------- ITEMS dataset ---------------- */
 const ITEMS = {
   testdrops: [
@@ -738,15 +752,16 @@ const ITEMS = {
     { name:'Taurus Civilian', rarity:'common', category:'Pistols', img:IMAGES['Taurus Civilian'] || FALLBACK }
   ],
   drugs: [
-    { name:'RP 10', rarity:'common', category:'Common', img:FALLBACK },
-    { name:'MBox 10', rarity:'common', category:'Common', img:FALLBACK },
-    { name:'V 230', rarity:'common', category:'Common', img:FALLBACK },
-    { name:'RP 15', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
-    { name:'MBox 15', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
-    { name:'RP 20', rarity:'rare', category:'Rare', img:FALLBACK },
-    { name:'MBox 30', rarity:'rare', category:'Rare', img:FALLBACK },
-    { name:'Percocet', rarity:'epic', category:'Epic', img:FALLBACK },
-    { name:'Lean', rarity:'epic', category:'Epic', img:FALLBACK }
+    { name:'Weed', rarity:'common', category:'Common', img:FALLBACK },
+    { name:'Shrooms', rarity:'common', category:'Common', img:FALLBACK },
+    { name:'Xanax', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
+    { name:'Perc 20s', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
+    { name:'Perc 30s', rarity:'rare', category:'Rare', img:FALLBACK },
+    { name:'Green', rarity:'rare', category:'Rare', img:FALLBACK },
+    { name:'Tris', rarity:'epic', category:'Epic', img:FALLBACK },
+    { name:'Quagen', rarity:'epic', category:'Epic', img:FALLBACK },
+    { name:'Wockhardt', rarity:'legendary', category:'Legendary', img:FALLBACK },
+    { name:'PCP', rarity:'legendary', category:'Legendary', img:FALLBACK }
   ]
 };
 
@@ -1137,19 +1152,49 @@ function renderGrid(){
 function openWeaponPopupFromCard(item){
   const name = item.name;
   const rarity = item.rarity || 'common';
-  const stats = WEAPON_STATS[name] || {};
-  openWeaponPopup(name, rarity, stats, item.img || FALLBACK);
+  const isDrug = activeTab === 'drugs';
+  const stats = isDrug ? DRUG_PRICES[name] : WEAPON_STATS[name] || {};
+  openWeaponPopup(name, rarity, stats, item.img || FALLBACK, isDrug);
 }
 
 /* open popup generic */
-function openWeaponPopup(name, rarity, stats, img){
+function openWeaponPopup(name, rarity, stats, img, isDrug = false){
   weaponPopupName.textContent = name;
   weaponPopupRarity.textContent = (rarity||'common').toUpperCase();
   weaponPopupImage.src = img || FALLBACK;
-  statDamage.textContent = stats.damage ?? '-';
-  statFire.textContent = stats.fire ? (stats.fire + ' RPM') : '-';
-  statAmmo.textContent = stats.ammo ?? '-';
-  statMagazine.textContent = (stats.magStd ? ('Reg: ' + stats.magStd) : '-') + (stats.magExt ? (' | Ext: ' + stats.magExt) : '');
+  
+  if(isDrug) {
+    // Show price for drugs
+    const statsGrid = document.querySelector('.weapon-stats-grid');
+    statsGrid.innerHTML = `
+      <div class="stat-card" style="grid-column: 1 / -1;">
+        <div class="stat-title">Price</div>
+        <div class="stat-value" style="color:var(--accent); font-size:28px;">${stats.price || '-'}</div>
+      </div>
+    `;
+  } else {
+    // Show weapon stats
+    const statsGrid = document.querySelector('.weapon-stats-grid');
+    statsGrid.innerHTML = `
+      <div class="stat-card stat-card-1 stat-card-large">
+        <div class="stat-title">Damage</div>
+        <div class="stat-value">${stats.damage ?? '-'}</div>
+      </div>
+      <div class="stat-card stat-card-2 stat-card-large">
+        <div class="stat-title">Fire Rate</div>
+        <div class="stat-value">${stats.fire ? (stats.fire + ' RPM') : '-'}</div>
+      </div>
+      <div class="stat-card stat-card-3">
+        <div class="stat-title">Ammo</div>
+        <div class="stat-value">${stats.ammo ?? '-'}</div>
+      </div>
+      <div class="stat-card stat-card-4">
+        <div class="stat-title">Magazine</div>
+        <div class="stat-value">${(stats.magStd ? ('Reg: ' + stats.magStd) : '-') + (stats.magExt ? (' | Ext: ' + stats.magExt) : '')}</div>
+      </div>
+    `;
+  }
+  
   weaponPopup.classList.remove('hidden');
   weaponPopup.setAttribute('aria-hidden','false');
 }
