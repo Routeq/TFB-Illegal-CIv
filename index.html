@@ -1827,7 +1827,7 @@ function showUserProfileModal(user) {
   modal.className = 'modal-overlay open';
   modal.style.display = 'flex';
   modal.innerHTML = `
-    <div class="modal" style="max-width:600px;">
+    <div class="modal" style="max-width:600px; background:rgba(70,70,70,.95);">
       <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:24px;">
         <div>
           <h3 style="color:var(--accent); font-weight:900; font-size:28px; margin:0 0 8px 0;">
@@ -1918,7 +1918,7 @@ function showNewThreadModal(username) {
   modal.className = 'modal-overlay open';
   modal.style.display = 'flex';
   modal.innerHTML = `
-    <div class="modal" style="max-width:700px;">
+    <div class="modal" style="max-width:700px; background:rgba(70,70,70,.95);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h3 style="color:var(--accent); font-weight:900; font-size:24px; margin:0;">
           <i class="fa-solid fa-plus"></i> Create New Thread
@@ -1928,12 +1928,12 @@ function showNewThreadModal(username) {
       
       <div style="margin-bottom:16px;">
         <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Thread Title *</label>
-        <input type="text" id="threadTitle" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Be specific and creative">
+        <input type="text" id="threadTitle" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit;" placeholder="Be specific and creative">
       </div>
 
       <div style="margin-bottom:16px;">
         <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Scheme Type *</label>
-        <select id="schemeType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; font-weight:700;">
+        <select id="schemeType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit; font-weight:700;">
           <option value="">-- Select --</option>
           <option value="Scammer">Scammer</option>
           <option value="Racer">Racer</option>
@@ -1943,7 +1943,7 @@ function showNewThreadModal(username) {
 
       <div style="margin-bottom:16px;">
         <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Thread Type *</label>
-        <select id="threadType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; font-weight:700;">
+        <select id="threadType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit; font-weight:700;">
           <option value="">-- Select --</option>
           <option value="Individual (I)">Individual (I)</option>
           <option value="Group (G)">Group (G)</option>
@@ -1952,14 +1952,14 @@ function showNewThreadModal(username) {
 
       <div style="margin-bottom:20px;">
         <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Video (Optional)</label>
-        <div style="background:rgba(0,0,0,.3); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-bottom:8px;">
+        <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-bottom:8px;">
           <div style="color:var(--muted); font-size:13px; margin-bottom:8px; font-weight:600;">Option 1: Upload Video File</div>
-          <input type="file" id="videoUpload" accept="video/*" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;">
+          <input type="file" id="videoUpload" accept="video/*" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit;">
           <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 100MB (supports 1-minute videos)</div>
         </div>
-        <div style="background:rgba(0,0,0,.3); border:1px solid var(--glass-border); border-radius:8px; padding:12px;">
+        <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:8px; padding:12px;">
           <div style="color:var(--muted); font-size:13px; margin-bottom:8px; font-weight:600;">Option 2: Video URL</div>
-          <input type="text" id="videoUrl" placeholder="https://example.com/video.mp4 or YouTube/Streamable link" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;">
+          <input type="text" id="videoUrl" placeholder="https://example.com/video.mp4 or YouTube/Streamable link" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit;">
           <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-link"></i> Paste direct video link or embed URL</div>
         </div>
       </div>
@@ -2091,7 +2091,7 @@ function showThreadModal(thread) {
   modal.className = 'modal-overlay open';
   modal.style.display = 'flex';
   modal.innerHTML = `
-    <div class="modal" style="max-width:1000px; max-height:90vh; overflow-y:auto;">
+    <div class="modal" style="max-width:1000px; max-height:90vh; overflow-y:auto; background:rgba(70,70,70,.95);">
       <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:20px;">
         <div style="flex:1;">
           <h3 style="color:var(--accent); font-weight:900; font-size:28px; margin:0 0 12px 0;">${thread.title}</h3>
@@ -2111,12 +2111,12 @@ function showThreadModal(thread) {
       </div>
 
       ${thread.videoUrl ? `
-        <div style="background:rgba(0,0,0,.6); border:2px solid var(--accent); border-radius:12px; padding:16px; margin-bottom:20px;">
+        <div style="background:rgba(80,80,80,.7); border:2px solid var(--accent); border-radius:12px; padding:16px; margin-bottom:20px;">
           <div style="color:var(--accent); font-weight:700; margin-bottom:12px; font-size:16px;">
             <i class="fa-solid fa-video"></i> Thread Video
           </div>
           ${thread.videoType === 'url' ? `
-            <div style="background:rgba(0,0,0,.5); padding:12px; border-radius:8px; margin-bottom:8px;">
+            <div style="background:rgba(70,70,70,.6); padding:12px; border-radius:8px; margin-bottom:8px;">
               <a href="${thread.videoUrl}" target="_blank" style="color:var(--accent); text-decoration:none; word-break:break-all;">
                 <i class="fa-solid fa-external-link-alt"></i> ${thread.videoUrl}
               </a>
@@ -2139,31 +2139,31 @@ function showThreadModal(thread) {
           `}
         </div>
       ` : `
-        <div style="background:rgba(0,0,0,.4); border:1px solid var(--glass-border); border-radius:12px; padding:24px; text-align:center; color:var(--muted); margin-bottom:20px;">
+        <div style="background:rgba(80,80,80,.5); border:1px solid var(--glass-border); border-radius:12px; padding:24px; text-align:center; color:var(--muted); margin-bottom:20px;">
           <i class="fa-solid fa-video-slash" style="font-size:32px; margin-bottom:12px; display:block; opacity:0.5;"></i>
           <div>No video attached to this thread</div>
         </div>
       `}
 
       <!-- Comments Section -->
-      <div style="background:rgba(0,0,0,.3); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:20px;">
+      <div style="background:rgba(90,90,90,.5); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:20px;">
         <h4 style="color:var(--accent); font-weight:800; font-size:20px; margin:0 0 16px 0;">
           <i class="fa-solid fa-comments"></i> Discussion (${comments.length})
         </h4>
 
         ${currentUser ? `
-          <div style="background:rgba(255,255,255,.02); border:1px solid var(--glass-border); border-radius:8px; padding:16px; margin-bottom:20px;">
-            <textarea id="newComment" placeholder="Add your comment..." style="width:100%; min-height:80px; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; resize:vertical; margin-bottom:12px;"></textarea>
+          <div style="background:rgba(100,100,100,.3); border:1px solid var(--glass-border); border-radius:8px; padding:16px; margin-bottom:20px;">
+            <textarea id="newComment" placeholder="Add your comment..." style="width:100%; min-height:80px; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit; resize:vertical; margin-bottom:12px;"></textarea>
             <div style="margin-bottom:12px;">
               <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px; font-size:14px;">Attach Video (Optional)</label>
-              <div style="background:rgba(0,0,0,.2); border:1px solid var(--glass-border); border-radius:6px; padding:10px; margin-bottom:6px;">
+              <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:6px; padding:10px; margin-bottom:6px;">
                 <div style="color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:600;">Upload File:</div>
-                <input type="file" id="commentVideo" accept="video/*" style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(0,0,0,.3); color:var(--text); font-family:inherit; font-size:12px;">
+                <input type="file" id="commentVideo" accept="video/*" style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit; font-size:12px;">
                 <div style="color:var(--muted); font-size:10px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 50MB</div>
               </div>
-              <div style="background:rgba(0,0,0,.2); border:1px solid var(--glass-border); border-radius:6px; padding:10px;">
+              <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:6px; padding:10px;">
                 <div style="color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:600;">Or paste URL:</div>
-                <input type="text" id="commentVideoUrl" placeholder="https://..." style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(0,0,0,.3); color:var(--text); font-family:inherit; font-size:12px;">
+                <input type="text" id="commentVideoUrl" placeholder="https://..." style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit; font-size:12px;">
               </div>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
@@ -2187,7 +2187,7 @@ function showThreadModal(thread) {
           ` : comments.map((comment, idx) => {
             const commentVideoType = comment.videoType ? `type="${comment.videoType}"` : 'type="video/mp4"';
             return `
-            <div class="comment-item" data-idx="${idx}" style="background:rgba(255,255,255,.02); border-left:3px solid var(--accent); border-radius:8px; padding:16px; margin-bottom:12px;">
+            <div class="comment-item" data-idx="${idx}" style="background:rgba(110,110,110,.5); border-left:3px solid var(--accent); border-radius:8px; padding:16px; margin-bottom:12px;">
               <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
                 <div>
                   <strong style="color:var(--accent); font-size:15px;">${comment.author}</strong>
@@ -2203,10 +2203,10 @@ function showThreadModal(thread) {
               </div>
               <div class="comment-text" style="color:var(--text); line-height:1.6; white-space:pre-wrap; margin-bottom:${comment.videoUrl ? '12px' : '0'};">${comment.text}</div>
               ${comment.videoUrl ? `
-                <div style="background:rgba(0,0,0,.4); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-top:12px;">
+                <div style="background:rgba(90,90,90,.6); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-top:12px;">
                   <div style="color:var(--muted); font-size:12px; margin-bottom:8px;"><i class="fa-solid fa-video"></i> Attached Video</div>
                   ${comment.videoType === 'url' ? `
-                    <div style="background:rgba(0,0,0,.3); padding:8px; border-radius:6px; margin-bottom:8px;">
+                    <div style="background:rgba(80,80,80,.6); padding:8px; border-radius:6px; margin-bottom:8px;">
                       <a href="${comment.videoUrl}" target="_blank" style="color:var(--accent); text-decoration:none; word-break:break-all; font-size:12px;">
                         <i class="fa-solid fa-external-link-alt"></i> ${comment.videoUrl}
                       </a>
