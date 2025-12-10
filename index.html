@@ -521,7 +521,9 @@ select{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.04); colo
 
       <div class="header-right">
         <div id="musicToggle" class="music-toggle" title="Toggle Music"><i class="fa-solid fa-volume-high"></i>&nbsp;<span id="musicLabel">Music: On</span></div>
-        <div id="adminToggle" class="admin-flag" title="Admin"><i class="fa-solid fa-user-lock"></i></div>
+        <div id="userProfile" class="user-profile" style="display:none; cursor:pointer;" title="User Profile">
+          <i class="fa-solid fa-user-circle"></i>&nbsp;<span id="userDisplayName">Guest</span>
+        </div>
         <div class="logo"><img src="TFB.png" class="header-logo" alt="TFB logo"></div>
       </div>
     </div>
@@ -675,23 +677,6 @@ select{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.04); colo
     </div>
   </div>
 
-  <!-- admin panel -->
-  <div class="admin-panel" id="adminPanel" aria-hidden="true">
-    <h3 style="margin:6px 0 12px;">Admin Panel</h3>
-    <label>Discord Webhook</label>
-    <input id="adminWebhook" type="text" placeholder="https://discord.com/api/webhooks/..." style="width:100%; margin-bottom:8px;">
-    <label>Server Uptime</label>
-    <input id="adminUptime" type="text" placeholder="http://example.com/health" style="width:100%; margin-bottom:8px;">
-    <label>Price JSON URL</label>
-    <input id="adminPrices" type="text" placeholder="https://raw.githubusercontent.com/.../prices.json" style="width:100%; margin-bottom:8px;">
-    <hr style="border-color:rgba(255,255,255,.03); margin:8px 0;">
-    <div style="display:flex; gap:8px;">
-      <button class="btn" id="saveAdminBtn">Save</button>
-      <button class="btn" id="logoutAdminBtn">Logout</button>
-    </div>
-    <div style="color:var(--muted); margin-top:10px; font-size:13px;">Admin password (client-side): <b>Qacti</b></div>
-  </div>
-
   <!-- background audio (extracted) -->
   <audio id="bgm" src="background_audio.mp3" loop preload="auto"></audio>
 
@@ -794,13 +779,8 @@ const musicToggle = document.getElementById('musicToggle');
 const musicLabel = document.getElementById('musicLabel');
 const bgm = document.getElementById('bgm');
 
-const adminToggle = document.getElementById('adminToggle');
-const adminPanel = document.getElementById('adminPanel');
-const saveAdminBtn = document.getElementById('saveAdminBtn');
-const logoutAdminBtn = document.getElementById('logoutAdminBtn');
-const adminWebhook = document.getElementById('adminWebhook');
-const adminUptime = document.getElementById('adminUptime');
-const adminPrices = document.getElementById('adminPrices');
+const userProfile = document.getElementById('userProfile');
+const userDisplayName = document.getElementById('userDisplayName');
 
 const statsModal = document.getElementById('statsModal');
 const statsTitle = document.getElementById('statsTitle');
@@ -831,20 +811,25 @@ function saveCfg(c){ localStorage.setItem('qc_cfg', JSON.stringify(c)); }
 function getWeights(){ const c = loadCfg(); return c.weights || DEFAULT_WEIGHTS; }
 function setWeights(w){ const c = loadCfg(); c.weights = w; saveCfg(c); }
 
-/* ---------- admin (client-side) ---------- */
-const ADMIN_PASS = 'Qacti';
-function isAdmin(){ return sessionStorage.getItem('qc_admin') === '1'; }
-function setAdmin(flag){ if(flag) sessionStorage.setItem('qc_admin','1'); else sessionStorage.removeItem('qc_admin'); adminPanel.style.display = flag ? 'block':'none'; }
-adminToggle.addEventListener('click', ()=>{
-  if(isAdmin()){ adminPanel.style.display = adminPanel.style.display === 'block' ? 'none':'block'; return; }
-  const p = prompt('Enter admin password:'); if(p === ADMIN_PASS){ setAdmin(true); loadAdmin(); alert('Admin ON'); } else alert('Wrong password');
-});
-logoutAdminBtn.addEventListener('click', ()=> { setAdmin(false); adminPanel.style.display = 'none'; alert('Logged out'); });
-saveAdminBtn.addEventListener('click', ()=> {
-  if(!isAdmin()){ alert('Admin only'); return; }
-  const cfg = loadCfg(); cfg.webhook = adminWebhook.value.trim(); cfg.uptime = adminUptime.value.trim(); cfg.prices = adminPrices.value.trim(); saveCfg(cfg); alert('Saved');
-});
-function loadAdmin(){ const cfg = loadCfg(); adminWebhook.value = cfg.webhook||''; adminUptime.value = cfg.uptime||''; adminPrices.value = cfg.prices||''; }
+/* ---------- user profile ---------- */
+function updateUserProfile(){
+  const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
+  if(currentUser){
+    userProfile.style.display = 'inline-flex';
+    userDisplayName.textContent = currentUser.username;
+  } else {
+    userProfile.style.display = 'none';
+  }
+}
+
+if(userProfile){
+  userProfile.addEventListener('click', ()=>{
+    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
+    if(currentUser){
+      showUserProfileModal(currentUser);
+    }
+  });
+}
 
 /* ---------- subtabs sets ---------- */
 const SUBTABS = {
@@ -1011,6 +996,7 @@ function renderGrid(){
         
         if(user){
           localStorage.setItem('forum_current_user', JSON.stringify({username: user.username}));
+          updateUserProfile();
           renderGrid();
         } else {
           const err = document.getElementById('loginError');
@@ -1047,6 +1033,7 @@ function renderGrid(){
         users.push({username, password});
         localStorage.setItem('forum_users', JSON.stringify(users));
         localStorage.setItem('forum_current_user', JSON.stringify({username}));
+        updateUserProfile();
         renderGrid();
       });
       
@@ -1102,6 +1089,7 @@ function renderGrid(){
     // Logout handler
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('forum_current_user');
+      updateUserProfile();
       renderGrid();
     });
 
@@ -1829,14 +1817,92 @@ function sendWebhook(payload){
     .catch(e=> console.warn('webhook fail', e));
 }
 
+/* User profile modal */
+function showUserProfileModal(user) {
+  const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
+  const userThreads = threads.filter(t => t.author === user.username);
+  const joinDate = new Date().toLocaleDateString(); // Could store actual join date in user object
+  
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay open';
+  modal.style.display = 'flex';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:600px;">
+      <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:24px;">
+        <div>
+          <h3 style="color:var(--accent); font-weight:900; font-size:28px; margin:0 0 8px 0;">
+            <i class="fa-solid fa-user-circle"></i> ${user.username}
+          </h3>
+          <div style="color:var(--muted); font-size:14px;">Member since ${joinDate}</div>
+        </div>
+        <button class="btn" id="closeProfileModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div style="background:linear-gradient(180deg,rgba(220,20,60,.1),rgba(0,71,171,.05)); border:2px solid var(--glass-border); border-radius:12px; padding:24px; margin-bottom:20px;">
+        <h4 style="color:var(--accent); font-weight:800; font-size:18px; margin:0 0 16px 0;">
+          <i class="fa-solid fa-chart-simple"></i> Statistics
+        </h4>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:16px;">
+          <div style="background:rgba(0,0,0,.4); padding:16px; border-radius:8px; text-align:center;">
+            <div style="color:var(--muted); font-size:13px; margin-bottom:4px;">Total Threads</div>
+            <div style="color:var(--accent); font-size:28px; font-weight:900;">${userThreads.length}</div>
+          </div>
+          <div style="background:rgba(0,0,0,.4); padding:16px; border-radius:8px; text-align:center;">
+            <div style="color:var(--muted); font-size:13px; margin-bottom:4px;">Username</div>
+            <div style="color:var(--text); font-size:20px; font-weight:700;">${user.username}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(0,0,0,.3); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:20px;">
+        <h4 style="color:var(--accent); font-weight:800; font-size:18px; margin:0 0 12px 0;">
+          <i class="fa-solid fa-list"></i> Recent Threads
+        </h4>
+        ${userThreads.length === 0 ? `
+          <div style="color:var(--muted); text-align:center; padding:20px;">
+            <i class="fa-solid fa-inbox" style="font-size:32px; display:block; margin-bottom:8px; opacity:0.5;"></i>
+            No threads posted yet
+          </div>
+        ` : userThreads.slice(0, 5).map(thread => `
+          <div style="padding:12px; background:rgba(255,255,255,.02); border-radius:8px; margin-bottom:8px; border-left:3px solid var(--accent);">
+            <div style="font-weight:700; color:var(--text); margin-bottom:4px;">${thread.title}</div>
+            <div style="font-size:12px; color:var(--muted);">
+              <span style="background:rgba(220,20,60,.2); color:var(--accent); padding:2px 8px; border-radius:4px; margin-right:6px;">${thread.schemeType}</span>
+              ${new Date(thread.date).toLocaleDateString()}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button class="btn" id="profileLogout" style="background:rgba(220,20,60,.2); border-color:var(--accent);">
+          <i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout
+        </button>
+        <button class="btn drop" id="closeProfileBtn">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('closeProfileModal').addEventListener('click', () => modal.remove());
+  document.getElementById('closeProfileBtn').addEventListener('click', () => modal.remove());
+  document.getElementById('profileLogout').addEventListener('click', () => {
+    localStorage.removeItem('forum_current_user');
+    updateUserProfile();
+    modal.remove();
+    if(activeTab === 'forums') renderGrid();
+  });
+  modal.addEventListener('click', (e) => {
+    if(e.target === modal) modal.remove();
+  });
+}
+
 /* startup */
 function init(){
   renderSubtabs(activeTab);
   renderGrid();
+  updateUserProfile();
   const cfg = loadCfg();
-  if(cfg.webhook) adminWebhook.value = cfg.webhook;
-  if(cfg.uptime) adminUptime.value = cfg.uptime;
-  if(cfg.prices) adminPrices.value = cfg.prices;
   document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleString();
   // music pref
   const mp = localStorage.getItem('qc_music_on');
