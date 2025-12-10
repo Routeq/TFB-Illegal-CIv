@@ -1059,13 +1059,13 @@ function renderGrid(){
         <!-- Thread List -->
         <div id="threadList">
           ${allThreads.length === 0 ? `
-            <div style="background:rgba(0,0,0,.5); border:1px solid var(--glass-border); border-radius:12px; padding:40px; text-align:center; color:var(--muted);">
+            <div style="background:rgba(80,80,80,.5); border:1px solid var(--glass-border); border-radius:12px; padding:40px; text-align:center; color:var(--muted);">
               <i class="fa-solid fa-inbox" style="font-size:48px; margin-bottom:16px; display:block;"></i>
               <div style="font-size:18px; font-weight:700;">No threads yet</div>
               <div style="margin-top:8px;">Be the first to create a thread!</div>
             </div>
           ` : allThreads.map((thread, idx) => `
-            <div class="thread-card" data-idx="${idx}" style="background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01)); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='var(--glass-border)'; this.style.transform='translateY(0)';">
+            <div class="thread-card" data-idx="${idx}" style="background:linear-gradient(180deg,rgba(100,100,100,.3),rgba(90,90,90,.2)); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='var(--glass-border)'; this.style.transform='translateY(0)';">
               <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
                 <div>
                   <h3 style="color:var(--text); font-weight:900; font-size:20px; margin:0 0 8px 0;">${thread.title}</h3>
