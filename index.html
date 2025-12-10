@@ -699,150 +699,43 @@ select{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.04); colo
 /* ---------------- IMAGE MAP (fixed) ---------------- */
 const IMAGES = {
 
-  /* -------------------- COMMON (Brown) -------------------- */
-  '.38 Special': 'images/38_special.png',
-  'Ghost Glock 17': 'images/ghost_glock17.png',
-  'Beretta M9': 'images/beretta_m9.png',
-  'MP9': 'images/mp9.png',
-  'Hellcat': 'images/hellcat.png',
-  'TP9': 'images/tp9.png',
-  'SXD9': 'images/sxd9.png',
- 
-  /* -------------------- UNCOMMON (Green) -------------------- */
-  'G23': 'images/g23.png',
-  'G43': 'images/g43x.png',
-  'Fn509': 'images/fn509.png',
-  'G19x': 'images/g19x.png',
-  'G27': 'images/g27.png',
-  'G2C': 'images/g2c.png',
- 'G43x': 'images/g43x.png',
-
-
-  /* -------------------- RARE (Blue) -------------------- */
-  'G22': 'images/g22.png',
-  'G41': 'images/G41.png',
-  'G19 MOS': 'images/g19xmos.png',
-  'Fn57': 'images/fn57.png',
-  'G19 GFlex': 'images/g19_gflex.png',
-  'G30': 'images/g30.png',
-  'Ruger SR45': 'images/ruger_sr45.png',
-  'GH': 'images/gh.png',
-  '1911': 'images/1911.png',
-
-  /* -------------------- EPIC (Red) -------------------- */
-  'Glock 20 Switch': 'images/g20_switch.png',
-  'FNX -45': 'images/fnx45.png',
-  'Tec-9': 'images/tec9.png',
-  'MAC-10': 'images/mag10.png',
-  'Tactical UZI': 'images/tactical_uzi.png',
-  'KEL-TEC PLR': 'images/keltec_plr.png',
-  'Tone ARP': 'images/2tone_arp.png',
-  '300 ARP': 'images/300arp.png',
-  'G17 Switch': 'images/g17_switch.png',
-  'G17B': 'images/g17b.png',
-  'G40': 'images/g40.png',
- 
-  'Red ARP': 'images/red_arp.png',
-  'MPA30': 'images/mpa30.png',
-  'Keltec': 'images/keltec.png',
-  'Incognito G19': 'images/i_g19.png',
-
-  /* -------------------- LEGENDARY (Yellow) -------------------- */
-  'AK-47': 'images/ak47.png',
-  'HELLPUP DRACO': 'images/hellpup.png',
-  'All Black Draco': 'images/all_black_draco.png',
-  'ZPAP M92': 'images/ZPAP_M92.png',
-  'Deagle': 'images/deagle.png',
-  'G18c': 'images/g18c.png',
-  'XDM-Elite': 'images/xdm_elite.png',
-  'P90': 'images/p90.png',
-  'MP5A3': 'images/mp5_a3.png',
-  'M16A1': 'images/m16a1.png',
-  'Red Draco': 'images/red_draco.png'
+  /* -------------------- TIER 1 COMMON GUNS -------------------- */
+  'Beretta': 'images/Beretta.png',
+  'G26': 'images/G26.png',
+  'G2C T1': 'images/G2C T1.png',
+  'G41 Tier 1': 'images/G41 Tier 1.png',
+  'G43': 'images/G43.png',
+  'S XD9': 'images/S XD9.png',
+  'TP9': 'images/TP9.png',
+  'Taurus Civilian': 'images/Taurus Civilian.png'
 };
 
 const FALLBACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="240"%3E%3Crect fill="%23333" width="400" height="240"/%3E%3Ctext x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
 
 /* ---------------- WEAPON STATS (updated damage by rarity) ---------------- */
 const WEAPON_STATS = {
-  /* ---------------- COMMON ---------------- */
-'.38 Special': { damage: 25, fire: 750, ammo: '9mm', magStd: 15, magExt: 33 },
-'Ghost Glock 17': { damage: 25, fire: 750, ammo: '9mm', magStd: 15, magExt: 33 },
-'Beretta M9': { damage: 25, fire: 750, ammo: '9mm', magStd: 15, magExt: 30 },
-'MP9': { damage: 25, fire: 600, ammo: '.45 ACP', magStd: 25, magExt: 50 },
-'Hellcat': { damage: 25, fire: 720, ammo: '9mm', magStd: 13, magExt: 26 },
-'TP9': { damage: 25, fire: 740, ammo: '9mm', magStd: 18, magExt: 36 },
-'SXD9': { damage: 25, fire: 730, ammo: '9mm', magStd: 16, magExt: 32 },
-
-
-/* ---------------- UNCOMMON ---------------- */
-'G23': { damage: 28, fire: 750, ammo: '9mm', magStd: 16, magExt: 32 },
-'G43': { damage: 28, fire: 800, ammo: '9mm', magStd: 30, magExt: 60 },
-'Fn509': { damage: 28, fire: 780, ammo: '9mm', magStd: 17, magExt: 34 },
-'G19x': { damage: 28, fire: 790, ammo: '9mm', magStd: 19, magExt: 38 },
-'G27': { damage: 28, fire: 760, ammo: '9mm', magStd: 15, magExt: 30 },
-'G2C': { damage: 28, fire: 750, ammo: '9mm', magStd: 12, magExt: 24 },
-'G43x': { damage: 25, fire: 710, ammo: '9mm', magStd: 10, magExt: 20 },
-/* ---------------- RARE ---------------- */
-'G22': { damage: 30, fire: 1200, ammo: '9mm', magStd: 25, magExt: 50 },
-'G41': { damage: 30, fire: 1100, ammo: '.32 ACP', magStd: 20, magExt: 40 },
-'G19 MOS': { damage: 30, fire: 900, ammo: '5.7x28', magStd: 50, magExt: 100 },
-'Fn57': { damage: 30, fire: 850, ammo: '5.7x28', magStd: 20, magExt: 40 },
-'G19 GFlex': { damage: 30, fire: 880, ammo: '9mm', magStd: 19, magExt: 38 },
-'G30': { damage: 30, fire: 820, ammo: '.45 ACP', magStd: 10, magExt: 20 },
-'Ruger SR45': { damage: 30, fire: 840, ammo: '.45 ACP', magStd: 10, magExt: 20 },
-'GH': { damage: 30, fire: 860, ammo: '9mm', magStd: 17, magExt: 34 },
-'1911': { damage: 28, fire: 700, ammo: '.45 ACP', magStd: 8, magExt: 16 },
-
-/* ---------------- EPIC ---------------- */
-'Glock 20 Switch': { damage: 35, fire: 600, ammo: '.45 ACP', magStd: 10, magExt: 21 },
-'FNX -45': { damage: 35, fire: 750, ammo: '9mm', magStd: 15, magExt: 30 },
-'Tec-9': { damage: 35, fire: 400, ammo: '.45 ACP', magStd: 8, magExt: 16 },
-'MAC-10': { damage: 35, fire: 1000, ammo: '9mm', magStd: 20, magExt: 40 },
-'Tactical UZI': { damage: 35, fire: 1090, ammo: '.45 ACP', magStd: 30, magExt: 50 },
-'KEL-TEC PLR': { damage: 35, fire: 1200, ammo: '.45 ACP', magStd: 25, magExt: 50 },
-'Tone ARP': { damage: 35, fire: 820, ammo: '5.56x45', magStd: 30, magExt: 60 },
-'300 ARP': { damage: 35, fire: 810, ammo: '5.56x45', magStd: 30, magExt: 60 },
-'G17 Switch': { damage: 35, fire: 950, ammo: '9mm', magStd: 17, magExt: 34 },
-'G17B': { damage: 35, fire: 920, ammo: '9mm', magStd: 17, magExt: 34 },
-'G40': { damage: 35, fire: 880, ammo: '10mm', magStd: 15, magExt: 30 },
-
-'Red ARP': { damage: 35, fire: 840, ammo: '5.56x45', magStd: 30, magExt: 60 },
-'MPA30': { damage: 35, fire: 1050, ammo: '9mm', magStd: 30, magExt: 60 },
-'Keltec': { damage: 35, fire: 1100, ammo: '9mm', magStd: 33, magExt: 66 },
-'Incognito G19': { damage: 35, fire: 900, ammo: '9mm', magStd: 19, magExt: 38 },
-
-/* ---------------- LEGENDARY ---------------- */
-'AK-47': { damage: 36, fire: 750, ammo: '5.56x45', magStd: 30, magExt: 60 },
-'HELLPUP DRACO': { damage: 36, fire: 750, ammo: '5.56x45', magStd: 30, magExt: 60 },
-'All Black Draco': { damage: 36, fire: 750, ammo: '5.56x45', magStd: 30, magExt: 60 },
-'ZPAP M92': { damage: 36, fire: 780, ammo: '7.62x39', magStd: 30, magExt: 60 },
-'Deagle': { damage: 36, fire: 600, ammo: '.50 AE', magStd: 7, magExt: 14 },
-'G18c': { damage: 36, fire: 1200, ammo: '9mm', magStd: 17, magExt: 34 },
-'XDM-Elite': { damage: 36, fire: 820, ammo: '9mm', magStd: 19, magExt: 38 },
-'P90': { damage: 36, fire: 1100, ammo: '5.7x28', magStd: 50, magExt: 100 },
-'MP5A3': { damage: 36, fire: 950, ammo: '9mm', magStd: 30, magExt: 60 },
-'Red Draco': { damage: 35, fire: 830, ammo: '7.62x39', magStd: 30, magExt: 60 },
-'M16A1': { damage: 36, fire: 800, ammo: '5.56x45', magStd: 30, magExt: 60 }
+  /* ---------------- TIER 1 COMMON GUNS ---------------- */
+  'Beretta': { damage: 25, fire: 750, ammo: '9mm', magStd: 15, magExt: 30 },
+  'G26': { damage: 25, fire: 740, ammo: '9mm', magStd: 10, magExt: 20 },
+  'G2C T1': { damage: 25, fire: 750, ammo: '9mm', magStd: 12, magExt: 24 },
+  'G41 Tier 1': { damage: 25, fire: 760, ammo: '.45 ACP', magStd: 13, magExt: 26 },
+  'G43': { damage: 25, fire: 710, ammo: '9mm', magStd: 10, magExt: 20 },
+  'S XD9': { damage: 25, fire: 730, ammo: '9mm', magStd: 16, magExt: 32 },
+  'TP9': { damage: 25, fire: 740, ammo: '9mm', magStd: 18, magExt: 36 },
+  'Taurus Civilian': { damage: 25, fire: 720, ammo: '9mm', magStd: 15, magExt: 30 }
 };
 
 /* ---------------- ITEMS dataset ---------------- */
 const ITEMS = {
   testdrops: [
-    { name:'.38 Special', rarity:'common', category:'Pistols', img:IMAGES['.38 Special'] || FALLBACK },
-    { name:'Ghost Glock 17', rarity:'common', category:'Pistols', img:IMAGES['Ghost Glock 17'] || FALLBACK },
-    { name:'Beretta M9', rarity:'common', category:'Pistols', img:IMAGES['Beretta M9'] || FALLBACK },
-    { name:'MP9', rarity:'common', category:'SMG', img:IMAGES['MP9'] || FALLBACK },
-    { name:'G23', rarity:'uncommon', category:'Pistols', img:IMAGES['G23'] || FALLBACK },
-    { name:'G43', rarity:'uncommon', category:'Pistols', img:IMAGES['G43'] || FALLBACK },
-    { name:'G22', rarity:'rare', category:'SMG', img:IMAGES['G22'] || FALLBACK },
-    { name:'G41', rarity:'rare', category:'SMG', img:IMAGES['G41'] || FALLBACK },
-    { name:'G19 MOS', rarity:'rare', category:'Pistols', img:IMAGES['G19 MOS'] || FALLBACK },
-    { name:'G17B', rarity:'epic', category:'Pistols', img:IMAGES['G17B'] || FALLBACK },
-    { name:'G40', rarity:'epic', category:'Pistols', img:IMAGES['G40'] || FALLBACK },
-    { name:'Fn57', rarity:'rare', category:'Pistols',img:IMAGES['Fn57'] || FALLBACK },
-    { name:'G19 GFlex', rarity:'rare', category:'Pistols',img:IMAGES['G19 GFlex'] || FALLBACK },
-
+    { name:'Beretta', rarity:'common', category:'Pistols', img:IMAGES['Beretta'] || FALLBACK },
+    { name:'G26', rarity:'common', category:'Pistols', img:IMAGES['G26'] || FALLBACK },
+    { name:'G2C T1', rarity:'common', category:'Pistols', img:IMAGES['G2C T1'] || FALLBACK },
+    { name:'G41 Tier 1', rarity:'common', category:'Pistols', img:IMAGES['G41 Tier 1'] || FALLBACK },
+    { name:'G43', rarity:'common', category:'Pistols', img:IMAGES['G43'] || FALLBACK },
+    { name:'S XD9', rarity:'common', category:'Pistols', img:IMAGES['S XD9'] || FALLBACK },
+    { name:'TP9', rarity:'common', category:'Pistols', img:IMAGES['TP9'] || FALLBACK },
+    { name:'Taurus Civilian', rarity:'common', category:'Pistols', img:IMAGES['Taurus Civilian'] || FALLBACK }
   ],
   drugs: [
     { name:'RP 10', rarity:'common', category:'Common', img:FALLBACK },
@@ -859,7 +752,7 @@ const ITEMS = {
 
 /* weights */
 const DEFAULT_WEIGHTS = {
-  testdrops: { common:40, uncommon:30, rare:20, epic:5 },
+  testdrops: { common:100 },
   drugs: { common:35, uncommon:25, rare:25, epic:15 }
 };
 
