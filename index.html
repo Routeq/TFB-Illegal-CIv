@@ -513,6 +513,7 @@ select{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.04); colo
           <div class="cat" data-tab="roe"><i class="fa-solid fa-book"></i>&nbsp;ROE</div>
           <div class="cat" data-tab="schemes"><i class="fa-solid fa-file-pen"></i>&nbsp;Schemes</div>
           <div class="cat" data-tab="spot"><i class="fa-solid fa-location-dot"></i>&nbsp;The Spot</div>
+          <div class="cat" data-tab="forums"><i class="fa-solid fa-comments"></i>&nbsp;Forums</div>
         </div>
 
         <div class="subtabs" id="subtabs"></div>
@@ -932,6 +933,193 @@ function createCard(item){
 /* render grid */
 function renderGrid(){
   const nodes = itemsForTab(activeTab);
+
+  // Handle Forums tab
+  if(activeTab === 'forums'){
+    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
+    const allThreads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
+    
+    if(!currentUser){
+      // Show login/register screen
+      contentArea.innerHTML = `
+        <div style="max-width:600px; margin:40px auto; padding:24px;">
+          <div style="background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.5)); border:2px solid var(--accent); border-radius:16px; padding:40px; backdrop-filter:blur(12px);">
+            <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center;">
+              <i class="fa-solid fa-user-lock"></i> Forum Access
+            </h2>
+            
+            <div id="authTabs" style="display:flex; gap:10px; margin-bottom:24px; justify-content:center;">
+              <button class="btn drop" id="showLogin" style="padding:12px 24px;">Login</button>
+              <button class="btn" id="showRegister" style="padding:12px 24px;">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+              <div style="margin-bottom:16px;">
+                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Username</label>
+                <input type="text" id="loginUsername" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Enter username">
+              </div>
+              <div style="margin-bottom:24px;">
+                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Password</label>
+                <input type="password" id="loginPassword" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Enter password">
+              </div>
+              <button class="btn drop" id="loginBtn" style="width:100%; padding:14px; font-size:16px;">Login</button>
+              <div id="loginError" style="color:#ff4444; margin-top:12px; text-align:center; display:none;"></div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" style="display:none;">
+              <div style="margin-bottom:16px;">
+                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Username</label>
+                <input type="text" id="regUsername" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Choose username">
+              </div>
+              <div style="margin-bottom:16px;">
+                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Password</label>
+                <input type="password" id="regPassword" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Choose password">
+              </div>
+              <div style="margin-bottom:24px;">
+                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Confirm Password</label>
+                <input type="password" id="regConfirm" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Confirm password">
+              </div>
+              <button class="btn drop" id="registerBtn" style="width:100%; padding:14px; font-size:16px;">Create Account</button>
+              <div id="registerError" style="color:#ff4444; margin-top:12px; text-align:center; display:none;"></div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Auth tab switching
+      document.getElementById('showLogin').addEventListener('click', () => {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('showLogin').classList.add('drop');
+        document.getElementById('showRegister').classList.remove('drop');
+      });
+      document.getElementById('showRegister').addEventListener('click', () => {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        document.getElementById('showLogin').classList.remove('drop');
+        document.getElementById('showRegister').classList.add('drop');
+      });
+
+      // Login handler
+      document.getElementById('loginBtn').addEventListener('click', () => {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const users = JSON.parse(localStorage.getItem('forum_users') || '[]');
+        const user = users.find(u => u.username === username && u.password === password);
+        
+        if(user){
+          localStorage.setItem('forum_current_user', JSON.stringify({username: user.username}));
+          renderGrid();
+        } else {
+          const err = document.getElementById('loginError');
+          err.textContent = 'Invalid username or password';
+          err.style.display = 'block';
+        }
+      });
+
+      // Register handler
+      document.getElementById('registerBtn').addEventListener('click', () => {
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const confirm = document.getElementById('regConfirm').value;
+        const err = document.getElementById('registerError');
+        
+        if(!username || !password){
+          err.textContent = 'Please fill all fields';
+          err.style.display = 'block';
+          return;
+        }
+        if(password !== confirm){
+          err.textContent = 'Passwords do not match';
+          err.style.display = 'block';
+          return;
+        }
+        
+        const users = JSON.parse(localStorage.getItem('forum_users') || '[]');
+        if(users.find(u => u.username === username)){
+          err.textContent = 'Username already exists';
+          err.style.display = 'block';
+          return;
+        }
+        
+        users.push({username, password});
+        localStorage.setItem('forum_users', JSON.stringify(users));
+        localStorage.setItem('forum_current_user', JSON.stringify({username}));
+        renderGrid();
+      });
+      
+      return;
+    }
+
+    // User is logged in - show forums
+    contentArea.innerHTML = `
+      <div style="max-width:1200px; margin:0 auto; padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+          <div>
+            <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin:0;">
+              <i class="fa-solid fa-comments"></i> Forums
+            </h2>
+            <div style="color:var(--muted); margin-top:8px;">Welcome, <strong style="color:var(--accent);">${currentUser.username}</strong></div>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn drop" id="newThreadBtn"><i class="fa-solid fa-plus"></i>&nbsp;New Thread</button>
+            <button class="btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout</button>
+          </div>
+        </div>
+
+        <!-- Thread List -->
+        <div id="threadList">
+          ${allThreads.length === 0 ? `
+            <div style="background:rgba(0,0,0,.5); border:1px solid var(--glass-border); border-radius:12px; padding:40px; text-align:center; color:var(--muted);">
+              <i class="fa-solid fa-inbox" style="font-size:48px; margin-bottom:16px; display:block;"></i>
+              <div style="font-size:18px; font-weight:700;">No threads yet</div>
+              <div style="margin-top:8px;">Be the first to create a thread!</div>
+            </div>
+          ` : allThreads.map((thread, idx) => `
+            <div class="thread-card" data-idx="${idx}" style="background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01)); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='var(--glass-border)'; this.style.transform='translateY(0)';">
+              <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
+                <div>
+                  <h3 style="color:var(--text); font-weight:900; font-size:20px; margin:0 0 8px 0;">${thread.title}</h3>
+                  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <span style="background:rgba(220,20,60,.2); color:var(--accent); padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700;">${thread.schemeType}</span>
+                    <span style="background:rgba(0,71,171,.2); color:#4a9eff; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700;">${thread.threadType}</span>
+                  </div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="color:var(--muted); font-size:13px;">by <strong style="color:var(--accent);">${thread.author}</strong></div>
+                  <div style="color:var(--muted); font-size:12px; margin-top:4px;">${new Date(thread.date).toLocaleDateString()}</div>
+                </div>
+              </div>
+              ${thread.videoUrl ? `<div style="color:var(--muted); font-size:14px;"><i class="fa-solid fa-video" style="color:var(--accent); margin-right:6px;"></i>Contains video</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('forum_current_user');
+      renderGrid();
+    });
+
+    // New thread button
+    document.getElementById('newThreadBtn').addEventListener('click', () => {
+      showNewThreadModal(currentUser.username);
+    });
+
+    // Thread click handlers
+    document.querySelectorAll('.thread-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const idx = parseInt(card.dataset.idx);
+        showThreadModal(allThreads[idx]);
+      });
+    });
+
+    return;
+  }
 
   // Handle Schemes tab
   if(activeTab === 'schemes'){
@@ -1657,6 +1845,170 @@ function init(){
   document.addEventListener('click', ()=> { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}); }, { passive: true });
   console.log('Quaker City Option B final build ready. Admin password (client-side):', ADMIN_PASS);
 }
+
+/* Forum modal functions */
+function showNewThreadModal(username) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay open';
+  modal.style.display = 'flex';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:700px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3 style="color:var(--accent); font-weight:900; font-size:24px; margin:0;">
+          <i class="fa-solid fa-plus"></i> Create New Thread
+        </h3>
+        <button class="btn" id="closeThreadModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <div style="margin-bottom:16px;">
+        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Thread Title *</label>
+        <input type="text" id="threadTitle" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Be specific and creative">
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Scheme Type *</label>
+        <select id="schemeType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; font-weight:700;">
+          <option value="">-- Select --</option>
+          <option value="Scammer">Scammer</option>
+          <option value="Racer">Racer</option>
+          <option value="Drug Dealer">Drug Dealer</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Thread Type *</label>
+        <select id="threadType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; font-weight:700;">
+          <option value="">-- Select --</option>
+          <option value="Individual (I)">Individual (I)</option>
+          <option value="Group (G)">Group (G)</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Upload Video (Optional)</label>
+        <input type="file" id="videoUpload" accept="video/*" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;">
+        <div style="color:var(--muted); font-size:12px; margin-top:6px;"><i class="fa-solid fa-info-circle"></i> Max 50MB recommended for browser storage</div>
+      </div>
+
+      <div id="threadError" style="color:#ff4444; margin-bottom:12px; display:none; padding:12px; background:rgba(255,0,0,.1); border-radius:8px; border:1px solid #ff4444;"></div>
+
+      <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <button class="btn" id="cancelThread">Cancel</button>
+        <button class="btn drop" id="submitThread"><i class="fa-solid fa-paper-plane"></i>&nbsp;Submit Thread</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('closeThreadModal').addEventListener('click', () => modal.remove());
+  document.getElementById('cancelThread').addEventListener('click', () => modal.remove());
+  
+  document.getElementById('submitThread').addEventListener('click', async () => {
+    const title = document.getElementById('threadTitle').value.trim();
+    const schemeType = document.getElementById('schemeType').value;
+    const threadType = document.getElementById('threadType').value;
+    const videoFile = document.getElementById('videoUpload').files[0];
+    const errorDiv = document.getElementById('threadError');
+
+    if(!title || !schemeType || !threadType) {
+      errorDiv.textContent = 'Please fill all required fields';
+      errorDiv.style.display = 'block';
+      return;
+    }
+
+    let videoUrl = null;
+    if(videoFile) {
+      if(videoFile.size > 50 * 1024 * 1024) {
+        errorDiv.textContent = 'Video file too large (max 50MB)';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      // Convert video to base64
+      const reader = new FileReader();
+      videoUrl = await new Promise((resolve) => {
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(videoFile);
+      });
+    }
+
+    const thread = {
+      title,
+      schemeType,
+      threadType,
+      author: username,
+      date: new Date().toISOString(),
+      videoUrl
+    };
+
+    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
+    threads.unshift(thread);
+    localStorage.setItem('forum_threads', JSON.stringify(threads));
+    
+    modal.remove();
+    renderGrid();
+  });
+
+  modal.addEventListener('click', (e) => {
+    if(e.target === modal) modal.remove();
+  });
+}
+
+function showThreadModal(thread) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay open';
+  modal.style.display = 'flex';
+  modal.innerHTML = `
+    <div class="modal" style="max-width:900px; max-height:90vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:20px;">
+        <div>
+          <h3 style="color:var(--accent); font-weight:900; font-size:28px; margin:0 0 12px 0;">${thread.title}</h3>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
+            <span style="background:rgba(220,20,60,.2); color:var(--accent); padding:6px 14px; border-radius:6px; font-size:13px; font-weight:700;">
+              <i class="fa-solid fa-tag"></i> ${thread.schemeType}
+            </span>
+            <span style="background:rgba(0,71,171,.2); color:#4a9eff; padding:6px 14px; border-radius:6px; font-size:13px; font-weight:700;">
+              <i class="fa-solid fa-users"></i> ${thread.threadType}
+            </span>
+          </div>
+          <div style="color:var(--muted); font-size:14px;">
+            Posted by <strong style="color:var(--accent);">${thread.author}</strong> on ${new Date(thread.date).toLocaleDateString()}
+          </div>
+        </div>
+        <button class="btn" id="closeViewThread"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      ${thread.videoUrl ? `
+        <div style="background:rgba(0,0,0,.6); border:2px solid var(--accent); border-radius:12px; padding:16px; margin-bottom:20px;">
+          <div style="color:var(--accent); font-weight:700; margin-bottom:12px; font-size:16px;">
+            <i class="fa-solid fa-video"></i> Thread Video
+          </div>
+          <video controls style="width:100%; max-height:500px; border-radius:8px; background:#000;">
+            <source src="${thread.videoUrl}" type="video/mp4">
+            Your browser does not support video playback.
+          </video>
+        </div>
+      ` : `
+        <div style="background:rgba(0,0,0,.4); border:1px solid var(--glass-border); border-radius:12px; padding:24px; text-align:center; color:var(--muted); margin-bottom:20px;">
+          <i class="fa-solid fa-video-slash" style="font-size:32px; margin-bottom:12px; display:block; opacity:0.5;"></i>
+          <div>No video attached to this thread</div>
+        </div>
+      `}
+
+      <div style="text-align:right;">
+        <button class="btn" id="closeViewThreadBtn">Close</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('closeViewThread').addEventListener('click', () => modal.remove());
+  document.getElementById('closeViewThreadBtn').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => {
+    if(e.target === modal) modal.remove();
+  });
+}
+
 // Start immediately
 init();
 
