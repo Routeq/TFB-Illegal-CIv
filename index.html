@@ -1118,14 +1118,14 @@ select:focus{
 /* ============= SUPABASE CONFIGURATION ============= */
 // TODO: Replace these with your actual Supabase credentials
 // Get them from: https://supabase.com → Your Project → Settings → API
-const SUPABASE_URL = 'https://supabase.com/dashboard/project/nuspjghelmpqwvbxienl'; // e.g., 'https://xxxxx.supabase.co'
+const SUPABASE_URL = 'https://nuspjghelmpqwvbxienl.supabase.co'; // CORRECTED: Your actual API URL
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3BqZ2hlbG1wcXd2YnhpZW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzNTcxNDcsImV4cCI6MjA4MDkzMzE0N30.SMEYGk_cNoGW8IVRlj9nBU_aKWbzOcwf_rv_9ydvyxQ'; // Your anon/public key
 
 let supabase;
 let useSupabase = false; // Will auto-enable when credentials are set
 
 // Initialize Supabase if credentials are provided
-if (SUPABASE_URL !== 'https://supabase.com/dashboard/project/nuspjghelmpqwvbxienl' && SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3BqZ2hlbG1wcXd2YnhpZW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzNTcxNDcsImV4cCI6MjA4MDkzMzE0N30.SMEYGk_cNoGW8IVRlj9nBU_aKWbzOcwf_rv_9ydvyxQ') {
+if (SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.includes('.supabase.co')) {
   try {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     useSupabase = true;
