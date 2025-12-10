@@ -511,6 +511,7 @@ select{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.04); colo
           <div class="cat active" data-tab="testdrops"><i class="fa-solid fa-bullseye"></i>&nbsp;Test Drops</div>
           <div class="cat" data-tab="drugs"><i class="fa-solid fa-capsules"></i>&nbsp;Drugs</div>
           <div class="cat" data-tab="roe"><i class="fa-solid fa-book"></i>&nbsp;ROE</div>
+          <div class="cat" data-tab="schemes"><i class="fa-solid fa-file-pen"></i>&nbsp;Schemes</div>
         </div>
 
         <div class="subtabs" id="subtabs"></div>
@@ -1022,6 +1023,105 @@ function createCard(item){
 /* render grid */
 function renderGrid(){
   const nodes = itemsForTab(activeTab);
+
+  // Handle Schemes tab
+  if(activeTab === 'schemes'){
+    contentArea.innerHTML = `
+      <div style="max-width:1000px; margin:0 auto; padding:24px;">
+        <div style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.4)); border:2px solid var(--glass-border); border-radius:16px; padding:32px; backdrop-filter:blur(12px);">
+          <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center;">
+            <i class="fa-solid fa-file-pen"></i> Illegal Civilian Scheme Submission Guidelines
+          </h2>
+          
+          <div style="color:var(--text); line-height:1.8; font-size:16px;">
+            <div style="background:rgba(220,20,60,.1); border:2px solid var(--accent); border-radius:10px; padding:20px; margin-bottom:28px;">
+              <p style="margin:0 0 16px 0; font-weight:700; font-size:18px;">
+                Welcome to the thread submission channel for your illegal civilian schemes! This is where all <strong style="color:var(--accent);">Scammer</strong>, <strong style="color:var(--accent);">Racer</strong>, and <strong style="color:var(--accent);">Drug Dealer</strong> threads must begin.
+              </p>
+              <p style="margin:0; color:var(--muted);">
+                Please read the guidelines carefully before submitting.
+              </p>
+            </div>
+
+            <div style="margin-bottom:28px;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+                <i class="fa-solid fa-check-circle"></i> Submission Requirements
+              </h3>
+              <p style="margin-bottom:16px; color:var(--muted);">
+                When you submit your thread, ensure you clearly include the following four pieces of information in your initial post:
+              </p>
+              <ul style="list-style:none; padding:0; margin:0;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Thread Name/Title:</strong> Be specific and creative.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Scheme Type:</strong> Clearly state if this is a <strong>Scammer</strong>, <strong>Racer</strong>, or <strong>Drug Dealer</strong> scheme.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Thread Type:</strong> State whether it is an <strong>Individual (I)</strong> or <strong>Group (G)</strong> thread.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Roleplay Focus:</strong> Describe the specific goal or scenario your roleplay will revolve around. Be creative and put effort into it!
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Eligibility:</strong> Ensure you are eligible for the Tier/Type you are requesting based on your character's current status and history.
+                </li>
+                <li style="padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Limit:</strong> Remember the Attack Limit on your chosen scheme (e.g., 1 or 2 per week).
+                </li>
+              </ul>
+            </div>
+
+            <div style="margin-bottom:24px;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
+                <i class="fa-solid fa-arrow-right"></i> What Happens Next? (Ticket System)
+              </h3>
+              <ul style="list-style:none; padding:0; margin:0;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Review:</strong> A staff member will review your submission in this channel.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Approval & Move:</strong> If your submission is accepted, staff will:
+                  <ul style="list-style:none; padding:0; margin-top:8px; margin-left:20px;">
+                    <li style="margin-bottom:8px; color:var(--muted);">• Place a check mark reaction (✅) on your submission post.</li>
+                    <li style="margin-bottom:8px; color:var(--muted);">• Create a private ticket channel for your thread.</li>
+                    <li style="color:var(--muted);">• Add you (and any listed participants) to that ticket channel.</li>
+                  </ul>
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Roleplay:</strong> Continue your thread only within the private ticket channel until the scenario is complete.
+                </li>
+                <li style="padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
+                  <strong style="color:var(--accent);">Drops:</strong> The Illegal Civilian Team + Management will track the Roleplay in the ticket and determine drops upon completion.
+                </li>
+              </ul>
+            </div>
+
+            <div style="background:rgba(220,20,60,.15); border-left:4px solid var(--accent); padding:20px; border-radius:8px; margin-top:32px;">
+              <p style="margin:0; font-weight:700; font-size:18px;">
+                <i class="fa-solid fa-lightbulb"></i> <strong>Reminder:</strong>
+              </p>
+              <p style="margin:8px 0 0 0; color:var(--muted);">
+                All submissions must follow these guidelines. Incomplete or unclear submissions may be rejected or delayed. 
+                Put effort into your thread concept to ensure approval and great roleplay!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   // Handle ROE tab
   if(activeTab === 'roe'){
