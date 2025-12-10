@@ -2910,8 +2910,15 @@ async function showThreadModal(thread) {
           if(!threads[threadIndex].comments) threads[threadIndex].comments = [];
           threads[threadIndex].comments.push(newComment);
           await updateThreadInDB(thread.id, { comments: threads[threadIndex].comments });
+          
+          // Refresh thread data from database to ensure we have latest
+          const updatedThreads = await getThreadsFromDB();
+          const updatedThreadIndex = updatedThreads.findIndex(t => t.id === thread.id);
+          
           modal.remove();
-          showThreadModal(threads[threadIndex]);
+          if(updatedThreadIndex !== -1) {
+            showThreadModal(updatedThreads[updatedThreadIndex]);
+          }
         } else {
           alert('Thread not found. It may have been deleted.');
           postBtn.disabled = false;
