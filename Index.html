@@ -2229,7 +2229,7 @@ function showNewThreadModal(username) {
   });
 }
 
-function showThreadModal(thread) {
+async function showThreadModal(thread) {
   const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
   const comments = thread.comments || [];
   const videoTypeAttr = thread.videoType ? `type="${thread.videoType}"` : 'type="video/mp4"';
