@@ -512,6 +512,7 @@ select{ background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.04); colo
           <div class="cat" data-tab="drugs"><i class="fa-solid fa-capsules"></i>&nbsp;Drugs</div>
           <div class="cat" data-tab="roe"><i class="fa-solid fa-book"></i>&nbsp;ROE</div>
           <div class="cat" data-tab="schemes"><i class="fa-solid fa-file-pen"></i>&nbsp;Schemes</div>
+          <div class="cat" data-tab="spot"><i class="fa-solid fa-location-dot"></i>&nbsp;The Spot</div>
         </div>
 
         <div class="subtabs" id="subtabs"></div>
@@ -1024,6 +1025,195 @@ function renderGrid(){
                 Put effort into your thread concept to ensure approval and great roleplay!
               </p>
             </div>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Handle The Spot tab
+  if(activeTab === 'spot'){
+    contentArea.innerHTML = `
+      <div style="max-width:1100px; margin:0 auto; padding:24px;">
+        <div style="background:linear-gradient(135deg,rgba(220,20,60,.15),rgba(0,71,171,.1)); border:3px solid var(--accent); border-radius:20px; padding:40px; backdrop-filter:blur(16px); box-shadow: 0 0 40px rgba(220,20,60,0.3), inset 0 0 60px rgba(0,0,0,0.4);">
+          
+          <!-- Header Section -->
+          <div style="text-align:center; margin-bottom:36px; border-bottom:2px solid var(--accent); padding-bottom:28px;">
+            <div style="font-size:14px; color:var(--accent); font-weight:800; letter-spacing:3px; margin-bottom:12px;">
+              <i class="fa-solid fa-bullhorn"></i> OFFICIAL ANNOUNCEMENT
+            </div>
+            <h2 style="color:var(--text); font-weight:900; font-size:42px; margin:0; text-shadow:0 0 20px rgba(220,20,60,0.5);">
+              <i class="fa-solid fa-location-dot" style="color:var(--accent);"></i> The Spot
+            </h2>
+            <div style="color:var(--muted); font-size:18px; margin-top:12px; font-weight:700;">
+              A New Player-Run Black Market System for Serious Roleplay
+            </div>
+          </div>
+
+          <div style="color:var(--text); line-height:1.9; font-size:16px;">
+            
+            <!-- Quote Section -->
+            <div style="background:rgba(0,0,0,0.5); border-left:5px solid var(--accent); padding:20px 24px; margin-bottom:32px; border-radius:8px; font-style:italic;">
+              <p style="margin:0; color:var(--muted); font-size:17px; font-weight:600;">
+                "In New York, everyone knows the rule:<br>
+                If you want heavy items, you go out of town — Upstate, Jersey, PA, Connecticut.<br>
+                NYC is watched, the blocks are hot, and nothing comes easy."
+              </p>
+            </div>
+
+            <p style="margin-bottom:20px; color:var(--muted);">
+              In FiveM, the map may be limited, but our creativity isn't. That's where <strong style="color:var(--accent);">The Spot</strong> comes in.
+            </p>
+
+            <p style="margin-bottom:32px; color:var(--muted);">
+              Born from a conversation between <strong style="color:var(--accent);">Adxt</strong> and <strong style="color:var(--accent);">Walking</strong>, The Spot is designed to bring a realistic, immersive, street-driven experience to how civilians access guns and drugs — without relying on factions, menus, or NPCs.
+            </p>
+
+            <!-- What Is The Spot -->
+            <div style="margin-bottom:32px;">
+              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-fire"></i> What Is The Spot?
+              </h3>
+              
+              <div style="background:rgba(220,20,60,0.08); border:2px solid rgba(220,20,60,0.3); border-radius:12px; padding:24px; margin-bottom:20px;">
+                <p style="margin:0 0 16px 0; font-weight:700; font-size:18px; color:var(--text);">
+                  <strong style="color:var(--accent);">The Spot is a fully player-run system.</strong>
+                </p>
+                <p style="margin:0; color:var(--muted);">
+                  Instead of a ped, a location, or a crafting menu, Civ Management members will personally run The Spot, rotating through different areas of the city and handling drops face-to-face.
+                </p>
+              </div>
+
+              <p style="margin-bottom:16px; color:var(--muted);">
+                This creates a living, unpredictable black market where civilians must use:
+              </p>
+
+              <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px;">
+                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
+                  <i class="fa-solid fa-map" style="color:var(--accent); margin-right:8px;"></i>
+                  <strong>Street knowledge</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
+                  <i class="fa-solid fa-users" style="color:var(--accent); margin-right:8px;"></i>
+                  <strong>Networking</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
+                  <i class="fa-solid fa-user-secret" style="color:var(--accent); margin-right:8px;"></i>
+                  <strong>Low-key movement</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
+                  <i class="fa-solid fa-comments" style="color:var(--accent); margin-right:8px;"></i>
+                  <strong>IC interactions</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2); grid-column:1/-1;">
+                  <i class="fa-solid fa-brain" style="color:var(--accent); margin-right:8px;"></i>
+                  <strong>Smart roleplay</strong>
+                </div>
+              </div>
+
+              <div style="background:rgba(220,20,60,0.15); border-left:4px solid var(--accent); padding:16px; border-radius:8px;">
+                <p style="margin:0; font-weight:700; color:var(--text);">
+                  Nothing is handed out. Everything must be earned.
+                </p>
+              </div>
+            </div>
+
+            <!-- Serious RP Only -->
+            <div style="margin-bottom:32px;">
+              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-theater-masks"></i> Serious RP Only
+              </h3>
+              
+              <div style="background:rgba(0,71,171,0.1); border:2px solid rgba(0,71,171,0.4); border-radius:12px; padding:24px;">
+                <p style="margin:0 0 16px 0; color:var(--muted);">
+                  To keep quality high, <strong style="color:var(--accent);">The Spot is only available to players who consistently show strong, serious roleplay.</strong>
+                </p>
+                <p style="margin:0; color:var(--muted);">
+                  During the beta phase, access will be limited to a selected group of top RP'ers who will help set the tone and shape the system.
+                </p>
+              </div>
+            </div>
+
+            <!-- What This Means for PD -->
+            <div style="margin-bottom:32px;">
+              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-shield-halved"></i> What This Means for PD
+              </h3>
+              
+              <p style="margin-bottom:16px; color:var(--muted);">
+                Because The Spot is run entirely by real players, police roleplay becomes more dynamic and realistic:
+              </p>
+
+              <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px;">
+                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                  <i class="fa-solid fa-video" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
+                  <strong style="font-size:14px;">Surveillance</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                  <i class="fa-solid fa-comment-dots" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
+                  <strong style="font-size:14px;">Rumor tracking</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                  <i class="fa-solid fa-handcuffs" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
+                  <strong style="font-size:14px;">Interrogations</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                  <i class="fa-solid fa-file-contract" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
+                  <strong style="font-size:14px;">Search warrants</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                  <i class="fa-solid fa-car" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
+                  <strong style="font-size:14px;">Traffic stops</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                  <i class="fa-solid fa-chart-line" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
+                  <strong style="font-size:14px;">Pattern recognition</strong>
+                </div>
+              </div>
+
+              <div style="background:rgba(220,20,60,0.1); border:2px solid rgba(220,20,60,0.3); border-radius:10px; padding:18px;">
+                <p style="margin:0; color:var(--muted); line-height:1.7;">
+                  There are no automatic alerts, no scripted locations, and no guaranteed catches.<br>
+                  <strong style="color:var(--accent);">If civilians slip up IC, they get caught. If they move smart, they stay safe.</strong>
+                </p>
+              </div>
+            </div>
+
+            <!-- A New Chapter -->
+            <div style="margin-bottom:32px;">
+              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-city"></i> A New Chapter for Civilian RP
+              </h3>
+              
+              <p style="margin-bottom:16px; color:var(--muted);">
+                The Spot is the first step in a larger civilian pipeline built around creative, authentic New York roleplay.
+              </p>
+
+              <p style="margin-bottom:16px; color:var(--muted);">
+                It gives players a real path into the weapon and drug game — not shortcuts, not menus, but <strong style="color:var(--accent);">earned opportunities through RP, story, and connections.</strong>
+              </p>
+
+              <p style="margin:0; color:var(--muted);">
+                As this system grows, those who show the strongest roleplay will always be the first to experience new features.
+              </p>
+            </div>
+
+            <!-- Closing Statement -->
+            <div style="background:linear-gradient(135deg, rgba(220,20,60,0.2), rgba(0,71,171,0.15)); border:3px solid var(--accent); border-radius:16px; padding:32px; text-align:center; box-shadow:0 0 30px rgba(220,20,60,0.3);">
+              <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin:0 0 20px 0; text-shadow:0 0 15px rgba(220,20,60,0.6);">
+                Welcome to The Spot
+              </h2>
+              <div style="font-size:19px; color:var(--text); font-weight:700; line-height:1.8; margin-bottom:24px;">
+                <div style="margin-bottom:8px;"><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Move smart.</div>
+                <div style="margin-bottom:8px;"><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Stay lowkey.</div>
+                <div><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Earn your lane.</div>
+              </div>
+              <div style="color:var(--muted); font-size:16px; font-weight:600; margin-top:24px; padding-top:20px; border-top:2px solid rgba(220,20,60,0.3);">
+                — Adxt & Walking
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
