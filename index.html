@@ -1951,9 +1951,17 @@ function showNewThreadModal(username) {
       </div>
 
       <div style="margin-bottom:20px;">
-        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Upload Video (Optional)</label>
-        <input type="file" id="videoUpload" accept="video/*" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;">
-        <div style="color:var(--muted); font-size:12px; margin-top:6px;"><i class="fa-solid fa-info-circle"></i> Max 50MB recommended for browser storage</div>
+        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Video (Optional)</label>
+        <div style="background:rgba(0,0,0,.3); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-bottom:8px;">
+          <div style="color:var(--muted); font-size:13px; margin-bottom:8px; font-weight:600;">Option 1: Upload Video File</div>
+          <input type="file" id="videoUpload" accept="video/*" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;">
+          <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 100MB (supports 1-minute videos)</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3); border:1px solid var(--glass-border); border-radius:8px; padding:12px;">
+          <div style="color:var(--muted); font-size:13px; margin-bottom:8px; font-weight:600;">Option 2: Video URL</div>
+          <input type="text" id="videoUrl" placeholder="https://example.com/video.mp4 or YouTube/Streamable link" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;">
+          <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-link"></i> Paste direct video link or embed URL</div>
+        </div>
       </div>
 
       <div id="threadError" style="color:#ff4444; margin-bottom:12px; display:none; padding:12px; background:rgba(255,0,0,.1); border-radius:8px; border:1px solid #ff4444;"></div>
@@ -1985,11 +1993,25 @@ function showNewThreadModal(username) {
 
     let videoUrl = null;
     let videoType = null;
+    const videoUrlInput = document.getElementById('videoUrl').value.trim();
     
-    // Show loading if video present
-    if(videoFile) {
-      if(videoFile.size > 50 * 1024 * 1024) {
-        errorDiv.textContent = 'Video file too large (max 50MB)';
+    // Check if URL is provided
+    if(videoUrlInput && videoFile) {
+      errorDiv.textContent = 'Please choose either file upload OR URL, not both';
+      errorDiv.style.display = 'block';
+      return;
+    }
+    
+    if(videoUrlInput) {
+      // Use provided URL
+      videoUrl = videoUrlInput;
+      videoType = 'url';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
+    } else if(videoFile) {
+      // Upload file
+      if(videoFile.size > 100 * 1024 * 1024) {
+        errorDiv.textContent = 'Video file too large (max 100MB for 1-minute videos)';
         errorDiv.style.display = 'block';
         return;
       }
@@ -2093,10 +2115,28 @@ function showThreadModal(thread) {
           <div style="color:var(--accent); font-weight:700; margin-bottom:12px; font-size:16px;">
             <i class="fa-solid fa-video"></i> Thread Video
           </div>
-          <video controls style="width:100%; max-height:500px; border-radius:8px; background:#000;">
-            <source src="${thread.videoUrl}" ${videoTypeAttr}>
-            Your browser does not support video playback.
-          </video>
+          ${thread.videoType === 'url' ? `
+            <div style="background:rgba(0,0,0,.5); padding:12px; border-radius:8px; margin-bottom:8px;">
+              <a href="${thread.videoUrl}" target="_blank" style="color:var(--accent); text-decoration:none; word-break:break-all;">
+                <i class="fa-solid fa-external-link-alt"></i> ${thread.videoUrl}
+              </a>
+            </div>
+            ${thread.videoUrl.includes('youtube.com') || thread.videoUrl.includes('youtu.be') ? `
+              <iframe width="100%" height="400" src="${thread.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;"></iframe>
+            ` : thread.videoUrl.includes('streamable.com') ? `
+              <iframe src="${thread.videoUrl.replace('streamable.com/', 'streamable.com/e/')}" width="100%" height="400" frameborder="0" allowfullscreen style="border-radius:8px;"></iframe>
+            ` : `
+              <video controls style="width:100%; max-height:500px; border-radius:8px; background:#000;">
+                <source src="${thread.videoUrl}">
+                Your browser does not support video playback.
+              </video>
+            `}
+          ` : `
+            <video controls style="width:100%; max-height:500px; border-radius:8px; background:#000;">
+              <source src="${thread.videoUrl}" ${videoTypeAttr}>
+              Your browser does not support video playback.
+            </video>
+          `}
         </div>
       ` : `
         <div style="background:rgba(0,0,0,.4); border:1px solid var(--glass-border); border-radius:12px; padding:24px; text-align:center; color:var(--muted); margin-bottom:20px;">
@@ -2116,8 +2156,15 @@ function showThreadModal(thread) {
             <textarea id="newComment" placeholder="Add your comment..." style="width:100%; min-height:80px; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; resize:vertical; margin-bottom:12px;"></textarea>
             <div style="margin-bottom:12px;">
               <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px; font-size:14px;">Attach Video (Optional)</label>
-              <input type="file" id="commentVideo" accept="video/*" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit; font-size:13px;">
-              <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 30MB for comments</div>
+              <div style="background:rgba(0,0,0,.2); border:1px solid var(--glass-border); border-radius:6px; padding:10px; margin-bottom:6px;">
+                <div style="color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:600;">Upload File:</div>
+                <input type="file" id="commentVideo" accept="video/*" style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(0,0,0,.3); color:var(--text); font-family:inherit; font-size:12px;">
+                <div style="color:var(--muted); font-size:10px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 50MB</div>
+              </div>
+              <div style="background:rgba(0,0,0,.2); border:1px solid var(--glass-border); border-radius:6px; padding:10px;">
+                <div style="color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:600;">Or paste URL:</div>
+                <input type="text" id="commentVideoUrl" placeholder="https://..." style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(0,0,0,.3); color:var(--text); font-family:inherit; font-size:12px;">
+              </div>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
               <button class="btn" id="clearComment"><i class="fa-solid fa-eraser"></i>&nbsp;Clear</button>
@@ -2158,10 +2205,28 @@ function showThreadModal(thread) {
               ${comment.videoUrl ? `
                 <div style="background:rgba(0,0,0,.4); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-top:12px;">
                   <div style="color:var(--muted); font-size:12px; margin-bottom:8px;"><i class="fa-solid fa-video"></i> Attached Video</div>
-                  <video controls style="width:100%; max-height:300px; border-radius:6px; background:#000;">
-                    <source src="${comment.videoUrl}" ${commentVideoType}>
-                    Your browser does not support video playback.
-                  </video>
+                  ${comment.videoType === 'url' ? `
+                    <div style="background:rgba(0,0,0,.3); padding:8px; border-radius:6px; margin-bottom:8px;">
+                      <a href="${comment.videoUrl}" target="_blank" style="color:var(--accent); text-decoration:none; word-break:break-all; font-size:12px;">
+                        <i class="fa-solid fa-external-link-alt"></i> ${comment.videoUrl}
+                      </a>
+                    </div>
+                    ${comment.videoUrl.includes('youtube.com') || comment.videoUrl.includes('youtu.be') ? `
+                      <iframe width="100%" height="250" src="${comment.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:6px;"></iframe>
+                    ` : comment.videoUrl.includes('streamable.com') ? `
+                      <iframe src="${comment.videoUrl.replace('streamable.com/', 'streamable.com/e/')}" width="100%" height="250" frameborder="0" allowfullscreen style="border-radius:6px;"></iframe>
+                    ` : `
+                      <video controls style="width:100%; max-height:300px; border-radius:6px; background:#000;">
+                        <source src="${comment.videoUrl}">
+                        Your browser does not support video playback.
+                      </video>
+                    `}
+                  ` : `
+                    <video controls style="width:100%; max-height:300px; border-radius:6px; background:#000;">
+                      <source src="${comment.videoUrl}" ${commentVideoType}>
+                      Your browser does not support video playback.
+                    </video>
+                  `}
                 </div>
               ` : ''}
             </div>
@@ -2184,24 +2249,36 @@ function showThreadModal(thread) {
     document.getElementById('clearComment').addEventListener('click', () => {
       document.getElementById('newComment').value = '';
       document.getElementById('commentVideo').value = '';
+      document.getElementById('commentVideoUrl').value = '';
     });
 
     document.getElementById('postComment').addEventListener('click', async () => {
       const commentText = document.getElementById('newComment').value.trim();
       const videoFile = document.getElementById('commentVideo').files[0];
+      const videoUrlInput = document.getElementById('commentVideoUrl').value.trim();
       const postBtn = document.getElementById('postComment');
       
-      if(!commentText && !videoFile) {
+      if(!commentText && !videoFile && !videoUrlInput) {
         alert('Please enter a comment or attach a video');
+        return;
+      }
+      
+      if(videoFile && videoUrlInput) {
+        alert('Please choose either file upload OR URL, not both');
         return;
       }
       
       let videoUrl = null;
       let videoType = null;
       
-      if(videoFile) {
-        if(videoFile.size > 30 * 1024 * 1024) {
-          alert('Video file too large (max 30MB for comments)');
+      if(videoUrlInput) {
+        videoUrl = videoUrlInput;
+        videoType = 'url';
+        postBtn.disabled = true;
+        postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
+      } else if(videoFile) {
+        if(videoFile.size > 50 * 1024 * 1024) {
+          alert('Video file too large (max 50MB for comments)');
           return;
         }
         
