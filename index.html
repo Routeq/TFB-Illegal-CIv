@@ -1026,92 +1026,101 @@ function renderGrid(){
   // Handle ROE tab
   if(activeTab === 'roe'){
     contentArea.innerHTML = `
-      <div style="max-width:900px; margin:0 auto; padding:24px;">
+      <div style="max-width:1000px; margin:0 auto; padding:24px;">
         <div style="background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.4)); border:2px solid var(--glass-border); border-radius:16px; padding:32px; backdrop-filter:blur(12px);">
           <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center;">
-            <i class="fa-solid fa-scale-balanced"></i> Rules of Engagement
+            <i class="fa-solid fa-scale-balanced"></i> TFB:RP Illegal Civilian Rules of Engagement
           </h2>
           
           <div style="color:var(--text); line-height:1.8; font-size:16px;">
-            <div style="margin-bottom:32px;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
-                <i class="fa-solid fa-shield-halved"></i> General Rules
-              </h3>
+            <div style="margin-bottom:24px;">
               <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
                   <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Respect all players:</strong> No harassment, racism, or toxicity will be tolerated.
+                  Legal/Illegal Civilian's, must clearly identify the exact player you plan to engage with/attack if your target is inside a faction turf and or inside of a faction, ensure there are at least four faction members present (Including your target) before taking action. T1(Tier1) Civilians get two attacks per week, and T2(Tier2) Civilians get three, unless defending yourself or using an approved attack upgrade.
                 </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
                   <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>No RDM (Random Deathmatch):</strong> All kills must be justified through roleplay.
+                  Before attempting a kill, you must have a minimum of eight meaningful negative interactions with the character unless there is already established shooting beef. All attacks must be backed with Strong, Realistic escalation that Legal Civilian Management can confirm and approve.
                 </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
                   <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Stay in character:</strong> Maintain immersion at all times during roleplay.
-                </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>No metagaming:</strong> Use only in-character knowledge during gameplay.
+                  If a player disrespects your deceased associates, on the first interaction, you may only escalate to a robbery at that moment. <strong style="color:var(--accent);">(if you want BUT YOU CANNOT SHOOT)</strong> A kill is only allowed after eight+ neg interactions and enough story driven roleplay that makes the conflict deep and believable, simple insults alone are not considered proper escalation.
                 </li>
               </ul>
             </div>
 
-            <div style="margin-bottom:32px;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
-                <i class="fa-solid fa-gun"></i> Combat Rules
+            <div style="margin-bottom:28px; background:rgba(220,20,60,.1); border:2px solid var(--accent); border-radius:10px; padding:20px;">
+              <h3 style="color:var(--accent); font-weight:800; font-size:20px; margin-bottom:14px;">
+                <i class="fa-solid fa-bullseye"></i> Attack Limits
               </h3>
               <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Initiation required:</strong> Proper roleplay must occur before engaging in combat.
+                <li style="margin-bottom:10px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
+                  <strong>Tier 1 Illegal Civilian's</strong> = 2 attacks per week.
                 </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>New Life Rule:</strong> After respawn, you forget your previous death and circumstances.
+                <li style="margin-bottom:10px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
+                  <strong>Tier 2 Illegal Civilian's</strong> = 3 attacks per week.
                 </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>No combat logging:</strong> Do not disconnect during or immediately after combat.
-                </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Fair play:</strong> No exploiting, glitching, or using third-party advantages.
+                <li style="padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
+                  All actions must be logged properly and checked off by <strong>(Illegal Civ Team)</strong> inside your thread.
                 </li>
               </ul>
             </div>
 
-            <div style="margin-bottom:32px;">
+            <div style="margin-bottom:24px;">
               <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid var(--accent); padding-bottom:8px;">
-                <i class="fa-solid fa-handshake"></i> Expectations
+                <i class="fa-solid fa-exclamation-triangle"></i> Important Rules
               </h3>
               <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
                   <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Quality roleplay:</strong> Create engaging and realistic scenarios for all involved.
+                  Every kill, shooting, and robbery, must be clipped and pinpointed. <strong style="color:var(--accent);">No clip = Situation may be voided.</strong> (if the player report's)
                 </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
                   <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Value your life:</strong> Act as you would in real life - fear for your character's safety.
+                  You may attack solo or alongside other approved Legal Civilians, Only those accepted into the Illegal Civilians scheme may participate in group attacks with you.
                 </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
                   <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Cooperation:</strong> Work with staff and follow their instructions promptly.
+                  Any hostile weapon interaction, including firing in someone's direction counts as an attack. <strong style="color:var(--accent);">( Each attack must be recorded with nvidia in your thread )</strong>
                 </li>
-                <li style="margin-bottom:12px; padding-left:24px; position:relative;">
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
                   <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong>Communication:</strong> Use proper channels for OOC discussions and reports.
+                  All attacks require a strong roleplay foundation, Poor or rushed escalation will result in punishments, including potential removal from the scheme. If you believe your death lacked escalation, you're free to submit a report.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  Driveby attacks from exotic vehicles, <strong>(Lambroghinis, Ferraris, ect.)</strong> are strictly blocked.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  All weapon usage must be portrayed realistically, Low effort or sloppy gun roleplay will not be tolerated.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  Legal Civilians may not act as "defense" for a faction on their turf. If the roleplay doesn't naturally justify your presence, you shouldn't be on their turf waiting for someone to spin. Legal Civilian Groups shouldn't camp turfs after being warned.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  If you join faction members in an attack, it still counts toward your weekly attack limit. Again only approved Legal Civilians can attack with factions.
+                </li>
+                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
+                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
+                  Shooting Strictly For Roleplay, <strong>(Shooting Into The Sky)</strong> counts as a negative interaction, not an attack. But if you fire towards a player, it becomes an official attack.
                 </li>
               </ul>
             </div>
 
             <div style="background:rgba(220,20,60,.15); border-left:4px solid var(--accent); padding:20px; border-radius:8px; margin-top:32px;">
               <p style="margin:0; font-weight:700; font-size:18px;">
-                <i class="fa-solid fa-triangle-exclamation"></i> <strong>Important:</strong>
+                <i class="fa-solid fa-triangle-exclamation"></i> <strong>Remember:</strong>
               </p>
               <p style="margin:8px 0 0 0; color:var(--muted);">
-                Breaking these rules may result in warnings, kicks, temporary bans, or permanent bans depending on severity. 
-                Staff decisions are final. If you have concerns, open a ticket in Discord.
+                All rules must be followed strictly. Failure to comply will result in punishments up to and including removal from the Illegal Civilian scheme. 
+                Keep all clips organized and submit them as required. Quality roleplay and proper escalation are mandatory.
               </p>
             </div>
           </div>
