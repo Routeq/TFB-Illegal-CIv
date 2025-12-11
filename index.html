@@ -18,18 +18,18 @@
   --bg-secondary:#0d0d0d;
   --bg-tertiary:#121212;
   --accent:#ff0000;
-  --accent-2:#00ff00;
+  --accent-2:#cc0000;
   --accent-hover:#ff3333;
-  --accent-2-hover:#33ff33;
-  --muted:#888888;
+  --accent-2-hover:#ff1a1a;
+  --muted:#666666;
   --text:#ffffff;
-  --text-secondary:#e0e0e0;
+  --text-secondary:#cccccc;
   --glass-border: rgba(255,0,0,.2);
-  --glass-border-blue: rgba(0,255,0,.2);
+  --glass-border-blue: rgba(200,0,0,.2);
   --maxw:1400px;
-  --kill-glow: 0 8px 32px rgba(255,0,0,0.4);
-  --shadow: 0 4px 16px rgba(0,0,0,.6);
-  --card-bg: linear-gradient(135deg, rgba(10,10,10,.95) 0%, rgba(5,5,5,.98) 100%);
+  --kill-glow: 0 8px 32px rgba(255,0,0,0.5);
+  --shadow: 0 4px 16px rgba(0,0,0,.8);
+  --card-bg: linear-gradient(135deg, rgba(10,10,10,.95) 0%, rgba(0,0,0,.98) 100%);
 }
 
 /* base */
@@ -773,27 +773,27 @@ select:focus{
 }
 
 .victory-item-rarity.common {
-  background: linear-gradient(135deg, #808080, #606060);
+  background: linear-gradient(135deg, #cc0000, #660000);
   color: #ffffff;
 }
 
 .victory-item-rarity.uncommon {
-  background: linear-gradient(135deg, #10b981, #047857);
+  background: linear-gradient(135deg, #ff0000, #990000);
   color: #ffffff;
 }
 
 .victory-item-rarity.rare {
-  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  background: linear-gradient(135deg, #ff3333, #cc0000);
   color: #ffffff;
 }
 
 .victory-item-rarity.epic {
-  background: linear-gradient(135deg, #a855f7, #7e22ce);
+  background: linear-gradient(135deg, #ff6666, #ff0000);
   color: #ffffff;
 }
 
 .victory-item-rarity.legendary {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #ff0000, #000000);
   color: #ffffff;
 }
 
@@ -2307,11 +2307,11 @@ spinStartBtn.addEventListener('click', async ()=>{
 
 function getRarityColor(rarity) {
   const colors = {
-    common: '#8b7355',
-    uncommon: '#4caf50',
-    rare: '#2196f3',
-    epic: '#9c27b0',
-    legendary: '#ff9800'
+    common: '#660000',
+    uncommon: '#990000',
+    rare: '#cc0000',
+    epic: '#ff0000',
+    legendary: '#ff3333'
   };
   return colors[rarity] || colors.common;
 }
@@ -2967,7 +2967,7 @@ async function showThreadModal(thread) {
         const threadIndex = threads.findIndex(t => t.id === thread.id);
         if(threadIndex !== -1) {
           if(!threads[threadIndex].comments) threads[threadIndex].comments = [];
-          threads[threadIndex].comments.push(newComment);
+          threads[threadIndex].comments.push(newComment);s
           await updateThreadInDB(thread.id, { comments: threads[threadIndex].comments });
           
           // Refresh thread data from database to ensure we have latest
