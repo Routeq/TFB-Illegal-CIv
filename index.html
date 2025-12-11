@@ -1,3075 +1,362 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>The Five Borough Illegal Civ</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Supabase Client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-:root{
-  --bg:#0a0a0a;
-  --bg-secondary:#121212;
-  --bg-tertiary:#1a1a1a;
-  --accent:#ff0000;
-  --accent-2:#ff0033;
-  --accent-hover:#ff3333;
-  --accent-2-hover:#ff0055;
-  --muted:#9e9e9e;
-  --text:#ffffff;
-  --text-secondary:#e0e0e0;
-  --glass-border: rgba(255,0,0,.15);
-  --glass-border-blue: rgba(255,0,51,.15);
-  --maxw:1400px;
-  --kill-glow: 0 8px 32px rgba(255,0,0,0.4);
-  --shadow: 0 4px 16px rgba(0,0,0,.4);
-  --card-bg: linear-gradient(135deg, rgba(26,26,26,.95) 0%, rgba(18,18,18,.95) 100%);
-}
-
-/* base */
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:"Rajdhani",sans-serif;background:#0a0a0a;color:var(--text);-webkit-font-smoothing:antialiased;}
-
-/* Performance optimizations */
-* { -webkit-tap-highlight-color: transparent; }
-.card, .victory-item, .drop-card { contain: layout style paint; transform: translateZ(0); }
-.modal-overlay, .victory-overlay { will-change: opacity; backface-visibility: hidden; }
-.victory-card { will-change: transform, opacity; transform: translateZ(0); backface-visibility: hidden; }
-img { will-change: auto; transform: translateZ(0); }
-.grid { contain: layout style; }
-.victory-items-grid { contain: layout; }
-
-/* ---------------------------
-   Background + Forum Aesthetic
-   --------------------------- */
-#bgVideo {
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:0;
-  filter: blur(3px) saturate(.8) brightness(.6);
-  transform: translateZ(0);
-}
-#bgDark {
-  position:fixed;
-  inset:0;
-  background: linear-gradient(180deg, rgba(10,10,10,0.85), rgba(0,0,0,0.92));
-  z-index:1;
-}
-#bgEmblem {
-  position:fixed;
-  top:50%;
-  left:50%;
-  width:60vw;
-  max-width:920px;
-  transform:translate(-50%,-50%);
-  opacity:0.04;
-  z-index:1;
-  pointer-events:none;
-  filter: blur(2px);
-}
-
-/* container */
-.wrap{ position:relative; z-index:6; width:100%; max-width:var(--maxw); margin:0 auto; padding:20px; }
-
-/* main panel - Modern Forum Style */
-.container{ 
-  background: var(--card-bg); 
-  border-radius:20px; 
-  padding:32px; 
-  border:2px solid var(--glass-border); 
-  box-shadow:var(--shadow), 0 0 0 1px rgba(220,20,60,.1); 
-  position:relative;
-  overflow:hidden;
-}
-.container::before{
-  content:'';
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:4px;
-  background:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-}
-
-/* header - Forum Style */
-.header{ 
-  display:flex; 
-  align-items:center; 
-  justify-content:space-between; 
-  gap:24px; 
-  margin-bottom:32px; 
-  padding-bottom:24px;
-  border-bottom:2px solid transparent;
-  border-image:linear-gradient(90deg, var(--accent) 0%, transparent 100%) 1;
-}
-.header-left{ max-width:70%; }
-.title{ 
-  font-size:48px; 
-  margin:0; 
-  line-height:1.1; 
-  font-weight:900; 
-  background:linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  text-shadow:none;
-  letter-spacing:-1px;
-}
-.subtitle{ 
-  margin-top:12px; 
-  color:var(--text-secondary); 
-  font-weight:700; 
-  font-size:16px;
-  letter-spacing:0.5px;
-}
-
-/* top navigation - Modern Tabs */
-.topnav{ 
-  display:flex; 
-  gap:6px; 
-  margin-top:20px; 
-  flex-wrap:wrap; 
-  align-items:center; 
-  background:rgba(18,18,18,.6);
-  padding:8px;
-  border-radius:16px;
-  border:1px solid var(--glass-border);
-}
-.topnav .cat{ 
-  padding:14px 24px; 
-  border-radius:12px; 
-  background:transparent;
-  color:var(--text-secondary); 
-  border:none; 
-  font-weight:800; 
-  cursor:pointer; 
-  display:inline-flex; 
-  gap:10px; 
-  align-items:center; 
-  transition:all .3s;
-  text-transform:uppercase;
-  font-size:13px;
-  letter-spacing:1px;
-  position:relative;
-}
-.topnav .cat::after{
-  content:'';
-  position:absolute;
-  bottom:0;
-  left:0;
-  width:100%;
-  height:3px;
-  background:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-  transform:scaleX(0);
-  transition:transform .3s;
-}
-.topnav .cat:hover{
-  color:var(--text);
-  background:rgba(255,255,255,.05);
-}
-.topnav .cat.active{ 
-  color:var(--text); 
-  background: linear-gradient(135deg, rgba(220,20,60,.2), rgba(0,71,171,.2)); 
-  box-shadow: inset 0 0 20px rgba(220,20,60,.2); 
-}
-.topnav .cat.active::after{
-  transform:scaleX(1);
-}
-
-/* subtabs - Pill Style */
-.subtabs{ 
-  margin-top:16px; 
-  display:flex; 
-  gap:8px; 
-  align-items:center; 
-  flex-wrap:wrap; 
-}
-.subtabs .sub{ 
-  padding:10px 20px; 
-  border-radius:999px; 
-  background: var(--bg-tertiary); 
-  border:2px solid transparent; 
-  color:var(--muted); 
-  font-weight:800; 
-  cursor:pointer; 
-  transition:all .3s; 
-  font-size:13px;
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-.subtabs .sub:hover{
-  border-color:var(--glass-border);
-  color:var(--text-secondary);
-  transform:translateY(-2px);
-}
-.subtabs .sub.active{ 
-  color:#fff; 
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); 
-  box-shadow: 0 4px 16px rgba(220,20,60,.4); 
-  border-color:transparent; 
-  transform:translateY(-2px); 
-}
-
-/* header right/logo - Modern Forum Badge */
-.header-right{ display:flex; align-items:center; gap:16px; }
-.logo { 
-  width:100px; 
-  height:100px; 
-  border-radius:20px; 
-  overflow:hidden; 
-  display:flex; 
-  align-items:center; 
-  justify-content:center; 
-  border:3px solid var(--accent); 
-  background: var(--card-bg); 
-  box-shadow: 0 8px 30px rgba(220,20,60,.3), 0 0 0 1px rgba(220,20,60,.2); 
-  transition:all .3s;
-  position:relative;
-}
-.logo::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg, rgba(220,20,60,.1) 0%, rgba(0,71,171,.1) 100%);
-  opacity:0;
-  transition:opacity .3s;
-}
-.logo:hover{
-  transform:scale(1.05) rotate(2deg);
-  border-color:var(--accent-hover);
-  box-shadow: 0 12px 40px rgba(220,20,60,.5);
-}
-.logo:hover::before{
-  opacity:1;
-}
-.header-logo{ 
-  width:90%; 
-  height:90%; 
-  object-fit:contain; 
-  display:block; 
-  filter: drop-shadow(0 4px 12px rgba(220,20,60,.4)); 
-  position:relative;
-  z-index:1;
-}
-
-/* controls - Modern Forum Toolbar */
-.controls{ 
-  display:flex; 
-  align-items:center; 
-  justify-content:space-between; 
-  gap:16px; 
-  margin-top:24px; 
-  padding:16px;
-  background:var(--bg-secondary);
-  border-radius:12px;
-  border:1px solid var(--glass-border);
-}
-.controls .left{ display:flex; gap:12px; align-items:center; }
-.choose{ color:var(--text-secondary); font-weight:800; margin-right:8px; text-transform:uppercase; font-size:12px; letter-spacing:1px; }
-select{ 
-  background:var(--bg-tertiary); 
-  border:2px solid var(--glass-border); 
-  color:var(--text); 
-  padding:10px 16px; 
-  border-radius:10px; 
-  font-weight:800; 
-  transition:all .3s;
-  font-size:14px;
-}
-select:hover{
-  border-color:var(--accent);
-}
-select:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(220,20,60,.2);
-}
-
-.drop-actions{ display:flex; gap:12px; align-items:center; }
-.btn{ 
-  padding:12px 24px; 
-  border-radius:12px; 
-  font-weight:900; 
-  cursor:pointer; 
-  background: var(--bg-tertiary); 
-  border:2px solid var(--glass-border); 
-  color:var(--text); 
-  transition:all .3s;
-  text-transform:uppercase;
-  font-size:13px;
-  letter-spacing:1px;
-  position:relative;
-  overflow:hidden;
-}
-.btn::before{
-  content:'';
-  position:absolute;
-  top:50%;
-  left:50%;
-  width:0;
-  height:0;
-  background:rgba(255,255,255,.1);
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-  transition:width .4s, height .4s;
-}
-.btn:hover::before{
-  width:300px;
-  height:300px;
-}
-.btn:hover{
-  border-color:var(--accent);
-  color:#fff;
-  transform:translateY(-2px);
-}
-.btn.drop{ 
-  background: linear-gradient(135deg, var(--accent), var(--accent-2)); 
-  box-shadow: 0 4px 16px rgba(220,20,60,.4); 
-  color:white; 
-  border-color:transparent;
-}
-.btn.drop:hover{
-  background: linear-gradient(135deg, var(--accent-hover), var(--accent-2-hover)); 
-  box-shadow: 0 6px 24px rgba(220,20,60,.6); 
-}
-
-/* music toggle - Modern Switch */
-.music-toggle{ 
-  display:inline-flex; 
-  align-items:center; 
-  gap:10px; 
-  padding:12px 20px; 
-  border-radius:12px; 
-  background:var(--bg-tertiary); 
-  border:2px solid var(--glass-border); 
-  color:var(--muted); 
-  font-weight:800; 
-  cursor:pointer; 
-  transition:all .3s;
-  text-transform:uppercase;
-  font-size:12px;
-  letter-spacing:1px;
-}
-.music-toggle:hover{
-  border-color:var(--accent);
-  transform:translateY(-2px);
-}
-.music-toggle.on{ 
-  color:var(--accent); 
-  background:rgba(220,20,60,.1);
-  border-color:var(--accent);
-  box-shadow: 0 4px 16px rgba(220,20,60,.3); 
-}
-
-/* grid - Modern Forum Cards Container */
-.grid-wrap{ 
-  margin-top:24px; 
-  border-radius:16px; 
-  padding:24px; 
-  border:1px solid var(--glass-border); 
-  background: rgba(18,18,18,.4); 
-  box-shadow: inset 0 2px 10px rgba(0,0,0,.3); 
-}
-.grid{ 
-  display:grid; 
-  grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); 
-  gap:20px; 
-  align-items:stretch; 
-  transform: translateZ(0); 
-}
-
-/* cards - Modern Forum Post Style */
-.card{ 
-  border-radius:16px; 
-  padding:16px; 
-  background: var(--card-bg); 
-  border:2px solid transparent; 
-  min-height:240px; 
-  display:flex; 
-  flex-direction:column; 
-  position:relative; 
-  overflow:hidden; 
-  cursor:pointer;
-  transition:all .3s cubic-bezier(.4,0,.2,1);
-  box-shadow:var(--shadow);
-}
-.card::before{
-  content:'';
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:3px;
-  background:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
-  transform:scaleX(0);
-  transition:transform .3s;
-}
-.card::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg, rgba(220,20,60,.05), rgba(0,71,171,.05));
-  opacity:0;
-  transition:opacity .3s;
-}
-.card:hover{
-  transform:translateY(-8px) scale(1.02);
-  border-color:var(--accent);
-  box-shadow:0 12px 40px rgba(220,20,60,.3), 0 0 0 1px var(--accent);
-}
-.card:hover::before{
-  transform:scaleX(1);
-}
-.card:hover::after{
-  opacity:1;
-}
-.card .top-row{ 
-  display:flex; 
-  justify-content:space-between; 
-  align-items:center; 
-  margin-bottom:12px; 
-  position:relative;
-  z-index:1;
-}
-.card .name{ 
-  font-weight:900; 
-  color:var(--text); 
-  font-size:16px; 
-  text-overflow:ellipsis; 
-  white-space:nowrap; 
-  overflow:hidden; 
-  max-width:85%;
-  letter-spacing:0.5px;
-}
-.img-wrap{ 
-  flex:1 1 auto; 
-  display:flex; 
-  align-items:center; 
-  justify-content:center; 
-  padding:12px; 
-  background: rgba(0,0,0,.2); 
-  border-radius:12px; 
-  margin-bottom:12px; 
-  min-height:140px; 
-  position:relative;
-  z-index:1;
-  border:1px solid rgba(255,255,255,.05);
-}
-.img-wrap img{ 
-  width:100%; 
-  height:140px; 
-  object-fit:contain; 
-  display:block; 
-  filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));
-}
-
-/* rarity badge - Forum Tag Style */
-.badge{ 
-  position:absolute; 
-  left:16px; 
-  bottom:16px; 
-  background:linear-gradient(135deg, rgba(220,20,60,.8), rgba(0,71,171,.8)); 
-  padding:8px 14px; 
-  border-radius:8px; 
-  font-weight:900; 
-  color:#fff; 
-  border:1px solid rgba(255,255,255,.2); 
-  font-size:11px; 
-  text-transform:uppercase;
-  letter-spacing:1px;
-  box-shadow:0 4px 12px rgba(0,0,0,.4);
-  z-index:2;
-}
-
-/* turf map */
-.turf-map { width:100%; height:460px; border-radius:12px; overflow:hidden; background:linear-gradient(180deg, rgba(0,0,0,.12), rgba(255,255,255,0)); border:1px solid rgba(255,255,255,.04); box-shadow: 0 20px 60px rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; }
-.turf-map img{ width:100%; height:100%; object-fit:cover; }
-
-/* acquired list */
-.acquired-heading{ margin-top:18px; font-weight:900; color:var(--accent); }
-.acquired-grid{ margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; }
-
-/* modals */
-.modal-overlay{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.72); z-index:9999; }
-.modal-overlay.open{ display:flex; }
-.modal{ width:920px; max-width:96%; border-radius:12px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01)); border:1px solid rgba(255,255,255,.06); box-shadow: 0 22px 60px rgba(0,0,0,.6); }
-
-/* weapon popup (Killadelphia-style) */
-.weapon-popup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
-}
-.weapon-popup.hidden { display:none; }
-.weapon-popup-inner {
-  width: 80%;
-  max-width: 980px;
-  background: linear-gradient(180deg, rgba(20,20,25,0.95), rgba(10,10,12,0.92));
-  border-radius: 14px;
-  padding: 20px;
-  color: white;
-  box-shadow: 0 0 50px rgba(0,0,0,0.5);
-}
-.weapon-popup-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-.weapon-popup-header h2 { font-size:24px; margin:0; font-weight:900; color:var(--accent); }
-.rarity-tag { padding:6px 12px; border-radius:999px; font-weight:900; font-size:13px; color:#fff; background:rgba(255,255,255,0.06); }
-.weapon-popup-body { display:flex; gap:16px; align-items:flex-start; }
-.weapon-popup-image { width:300px; height:300px; object-fit:contain; background:linear-gradient(180deg, rgba(0,0,0,.08), rgba(255,255,255,0)); border-radius:12px; padding:12px; }
-.weapon-stats-grid { display:grid; grid-template-columns: repeat(2,1fr); gap:12px; flex:1; }
-.stat-card { background:rgba(0,0,0,0.35); padding:14px; border-radius:10px; }
-.stat-title { color:var(--muted); font-weight:800; font-size:12px; }
-.stat-value { font-weight:900; font-size:18px; margin-top:6px; color:#fff; }
-
-/* Victory Frame */
-.victory-overlay {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse at center, rgba(220, 20, 60, 0.15) 0%, rgba(0, 0, 0, 0.97) 70%);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100000;
-  animation: victoryFadeIn 0.15s ease-out;
-}
-
-@keyframes victoryFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.victory-card {
-  position: relative;
-  background: linear-gradient(135deg, rgba(26, 10, 10, 0.98) 0%, rgba(10, 5, 5, 0.98) 50%, rgba(18, 6, 18, 0.98) 100%);
-  border: 3px solid transparent;
-  border-radius: 20px;
-  padding: 0;
-  max-width: 1000px;
-  width: 95%;
-  text-align: center;
-  box-shadow: 0 20px 80px rgba(220, 20, 60, 0.4), 0 0 2px rgba(220, 20, 60, 0.8), inset 0 0 40px rgba(220, 20, 60, 0.08);
-  animation: victoryScale 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  overflow: hidden;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.victory-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 3px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  opacity: 0.8;
-  pointer-events: none;
-}
-
-@keyframes victoryScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.8) translateY(30px) translateZ(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0) translateZ(0);
-  }
-}
-
-.victory-header {
-  background: linear-gradient(135deg, rgba(220, 20, 60, 0.3) 0%, rgba(0, 71, 171, 0.2) 50%, rgba(220, 20, 60, 0.3) 100%);
-  padding: 24px;
-  border-bottom: 2px solid transparent;
-  border-image: linear-gradient(90deg, #dc143c 0%, #0047ab 50%, #dc143c 100%) 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
-
-.victory-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(0, 71, 171, 0.05));
-  pointer-events: none;
-}
-
-.victory-header h2 {
-  margin: 0;
-  font-size: 42px;
-  font-weight: 900;
-  background: linear-gradient(135deg, #ff4757 0%, #0084ff 50%, #ff4757 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(255, 71, 87, 0.6));
-  letter-spacing: 3px;
-  position: relative;
-  z-index: 1;
-}
-
-.victory-count {
-  font-size: 18px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(0, 0, 0, 0.3);
-  padding: 8px 16px;
-  border-radius: 20px;
-  letter-spacing: 1px;
-}
-
-.victory-content {
-  padding: 30px 20px;
-}
-
-.victory-items-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.victory-item {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.3) 100%);
-  border: 2px solid transparent;
-  border-radius: 16px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: all 0.15s ease;
-  animation: victoryItemAppear 0.2s ease-out backwards;
-  position: relative;
-  overflow: hidden;
-}
-
-.victory-item::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(220, 20, 60, 0.4) 0%, rgba(0, 71, 171, 0.4) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-@keyframes victoryItemAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(5px) translateZ(0);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0) translateZ(0);
-  }
-}
-
-.victory-item:nth-child(1) { animation-delay: 0.03s; }
-.victory-item:nth-child(2) { animation-delay: 0.06s; }
-.victory-item:nth-child(3) { animation-delay: 0.09s; }
-.victory-item:nth-child(4) { animation-delay: 0.12s; }
-.victory-item:nth-child(5) { animation-delay: 0.15s; }
-.victory-item:nth-child(6) { animation-delay: 0.18s; }
-
-.victory-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(220, 20, 60, 0.5), 0 0 20px rgba(0, 71, 171, 0.3);
-}
-
-.victory-item:hover::before {
-  background: linear-gradient(135deg, rgba(220, 20, 60, 0.7) 0%, rgba(0, 71, 171, 0.7) 100%);
-}
-
-.victory-image-container {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  margin-bottom: 15px;
-  background: linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(0, 71, 171, 0.2) 100%);
-  border: 2px solid transparent;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 25px rgba(220, 20, 60, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.3);
-  animation: victoryImagePulse 2s ease-in-out infinite;
-  overflow: hidden;
-}
-
-.victory-image-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-@keyframes victoryImagePulse {
-  0%, 100% {
-    box-shadow: 0 0 25px rgba(220, 20, 60, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 35px rgba(220, 20, 60, 0.6), 0 0 20px rgba(0, 71, 171, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.3);
-  }
-}
-
-.victory-image-container img {
-  max-width: 85%;
-  max-height: 85%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));
-}
-
-.victory-item-name {
-  font-size: 18px;
-  font-weight: 900;
-  color: #ffffff;
-  margin: 10px 0 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-align: center;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-.victory-item-rarity {
-  display: inline-block;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-weight: 800;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-}
-
-.victory-item-rarity.common {
-  background: linear-gradient(135deg, #808080, #606060);
-  color: #ffffff;
-}
-
-.victory-item-rarity.uncommon {
-  background: linear-gradient(135deg, #10b981, #047857);
-  color: #ffffff;
-}
-
-.victory-item-rarity.rare {
-  background: linear-gradient(135deg, #3b82f6, #1e40af);
-  color: #ffffff;
-}
-
-.victory-item-rarity.epic {
-  background: linear-gradient(135deg, #a855f7, #7e22ce);
-  color: #ffffff;
-}
-
-.victory-item-rarity.legendary {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #ffffff;
-}
-
-.victory-item-rarity.special {
-  background: linear-gradient(135deg, #ff6b35, #dc143c);
-  color: #ffffff;
-  animation: rarityGlow 1.5s ease-in-out infinite;
-}
-
-@keyframes rarityGlow {
-  0%, 100% {
-    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.5);
-  }
-  50% {
-    box-shadow: 0 4px 25px rgba(220, 20, 60, 0.9);
-  }
-}
-
-.victory-item-desc {
-  color: #b0b8c0;
-  font-size: 15px;
-  margin-top: 15px;
-  font-style: italic;
-  line-height: 1.5;
-}
-
-.victory-collect-btn {
-  width: calc(100% - 60px);
-  margin: 0 30px 30px;
-  padding: 18px;
-  font-size: 20px;
-  font-weight: 900;
-  background: linear-gradient(135deg, #dc143c, #ff4757);
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(220, 20, 60, 0.5);
-}
-
-.victory-collect-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(220, 20, 60, 0.7);
-  background: linear-gradient(135deg, #ff4757, #dc143c);
-}
-
-.victory-collect-btn:active {
-  transform: translateY(0);
-}
-
-/* ========== MOBILE RESPONSIVE ========== */
-@media(max-width:980px){ 
-  .weapon-popup-body{flex-direction:column; align-items:center;} 
-  .weapon-popup-image{width:220px;height:220px;} 
-  .title{font-size:32px;} 
-  .logo{width:70px;height:70px;}
-  .grid{grid-template-columns: repeat(auto-fill, minmax(150px,1fr));} 
-  .victory-items-grid{grid-template-columns: repeat(2, 1fr) !important; gap:15px;} 
-  .victory-image-container{width:150px;height:150px;} 
-  .victory-header h2{font-size:32px;} 
-  .victory-header{flex-direction:column; gap:10px;} 
-  .victory-count{font-size:14px;} 
-  .container{padding:14px;}
-  .topnav .cat{padding:8px 12px; font-size:13px;}
-  .btn{padding:8px 12px; font-size:13px;}
-}
-
-@media(max-width:640px){ 
-  html,body{padding:10px;}
-  .wrap{padding:0;}
-  .container{padding:12px; border-radius:12px;}
-  .header{flex-direction:column; align-items:flex-start;}
-  .header-left{max-width:100%;}
-  .header-right{width:100%; justify-content:flex-end;}
-  .logo{width:60px;height:60px;}
-  .title{font-size:24px;}
-  .subtitle{font-size:13px;}
-  .topnav{gap:6px;}
-  .topnav .cat{padding:7px 10px; font-size:12px;}
-  .subtabs .sub{padding:6px 10px; font-size:12px;}
-  .controls{flex-wrap:wrap; gap:8px;}
-  .controls .left{flex:1; min-width:100%;}
-  .drop-actions{width:100%; justify-content:flex-end;}
-  .btn{padding:7px 10px; font-size:12px;}
-  select{padding:6px 8px; font-size:12px;}
-  .grid{grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap:10px;} 
-  .card{padding:8px; min-height:160px;}
-  .card .name{font-size:13px;}
-  .img-wrap{min-height:90px; padding:4px;}
-  .weapon-popup-inner{width:96%; padding:16px;} 
-  .weapon-popup-image{width:160px;height:160px;} 
-  .weapon-popup-header h2{font-size:18px;}
-  .stat-card{padding:10px;}
-  .stat-title{font-size:11px;}
-  .stat-value{font-size:16px;}
-  .modal{padding:16px; max-height:85vh; overflow-y:auto;}
-  .victory-card{width:98%; max-width:100%; padding:16px;} 
-  .victory-items-grid{grid-template-columns: 1fr !important; gap:10px;} 
-  .victory-image-container{width:120px;height:120px;} 
-  .victory-header h2{font-size:20px;} 
-  .victory-item-name{font-size:14px;} 
-  .victory-content{padding:16px 12px;} 
-  .victory-item{padding:12px;} 
-  .victory-collect-btn{padding:12px; font-size:14px;}
-  #landedGunDisplay{padding:12px; margin-top:12px;}
-  #landedGunDisplay img{max-width:80px; max-height:60px;}
-  #landedGunName{font-size:16px;}
-  #landedGunRarity{font-size:12px;}
-}
-
-@media(max-width:400px){ 
-  html,body{padding:8px;}
-  .container{padding:10px;}
-  .title{font-size:20px;}
-  .logo{width:50px;height:50px;}
-  .topnav .cat{padding:6px 8px; font-size:11px;}
-  .btn{padding:6px 8px; font-size:11px;}
-  .grid{grid-template-columns: repeat(auto-fill, minmax(110px,1fr)); gap:8px;} 
-  .card{padding:6px; min-height:140px;}
-  .card .name{font-size:12px;}
-  .img-wrap{min-height:75px;}
-  .victory-header h2{font-size:18px;} 
-  .victory-item-name{font-size:13px;} 
-  .victory-collect-btn{padding:10px; font-size:13px;}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behind Bars - Premium Bicycle Shop</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
- 
-  <!-- Background video (muted) -->
-  <video id="bgVideo" autoplay muted loop playsinline>
-    <source src="video.mp4" type="video/mp4">
-  </video>
-  <div id="bgDark" aria-hidden="true"></div>
-  <img id="bgEmblem" src="TFB.png" alt="" aria-hidden="true">
-
-  <div class="wrap">
-    <div class="header">
-      <div class="header-left">
-        <h1 class="title">The Five Borough Illegal Civ</h1>
-        <div class="subtitle">Illegal Civ</div>
-
-        <div class="topnav" id="mainNav">
-          <div class="cat active" data-tab="testdrops"><i class="fa-solid fa-bullseye"></i>&nbsp;Test Drops</div>
-          <div class="cat" data-tab="drugs"><i class="fa-solid fa-capsules"></i>&nbsp;Drugs</div>
-          <div class="cat" data-tab="roe"><i class="fa-solid fa-book"></i>&nbsp;ROE</div>
-          <div class="cat" data-tab="schemes"><i class="fa-solid fa-file-pen"></i>&nbsp;Schemes</div>
-          <div class="cat" data-tab="spot"><i class="fa-solid fa-location-dot"></i>&nbsp;The Spot</div>
-          <div class="cat" data-tab="forums"><i class="fa-solid fa-comments"></i>&nbsp;Forums</div>
-        </div>
-
-        <div class="subtabs" id="subtabs"></div>
-      </div>
-
-      <div class="header-right">
-        <div id="musicToggle" class="music-toggle" title="Toggle Music"><i class="fa-solid fa-volume-high"></i>&nbsp;<span id="musicLabel">Music: On</span></div>
-        <div id="userProfile" class="user-profile" style="display:none; cursor:pointer;" title="User Profile">
-          <i class="fa-solid fa-user-circle"></i>&nbsp;<span id="userDisplayName">Guest</span>
-        </div>
-        <div class="logo"><img src="TFB.png" class="header-logo" alt="TFB logo"></div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="controls">
-        <div class="left">
-          <div class="choose">Filter</div>
-          <select id="filterSelect">
-            <option value="all">All</option>
-            <option value="common">Common</option>
-            <option value="uncommon">Uncommon</option>
-            <option value="rare">Rare</option>
-            <option value="epic">Epic</option>
-            <option value="legendary">Legendary</option>
-          </select>
-        </div>
-
-        <div class="drop-actions">
-          <button class="btn" id="viewDropsBtn"><i class="fa-solid fa-list"></i>&nbsp;Drops</button>
-          <button class="btn drop" id="dropBtn"><i class="fa-solid fa-dice"></i>&nbsp;DROP</button>
-        </div>
-      </div>
-
-      <div id="contentArea">
-        <div class="grid-wrap">
-          <div class="grid" id="itemGrid" aria-live="polite"></div>
-        </div>
-      </div>
-
-      <div class="acquired-heading">Acquired Items</div>
-      <div class="acquired-grid" id="acquiredGrid"></div>
-
-      <div style="display:flex; gap:12px; margin-top:14px; align-items:flex-start; flex-wrap:wrap;">
-        <div style="flex:1; min-width:260px;">
-          <div class="info-panel" id="infoPanel">Click a card to preview more info. Use DROP to open the spin modal and receive a weighted drop.</div>
-        </div>
-        <div style="width:320px;">
-          <div class="info-panel">
-            <div style="font-weight:900">Made By Route</div>
-            <div style="color:var(--muted); margin-top:8px;" id="lastUpdated">Last updated: —</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="height:18px"></div>
-    <div class="footer"><div>© The Five Borough Illegal Civ</div><div style="color:var(--muted)">Built with ❤️</div></div>
-  </div>
-
-  <!-- Spin modal -->
-  <div class="modal-overlay" id="spinModal" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-weight:900; font-size:18px;">Spin Wheel</div>
-        <div style="color:var(--muted); font-weight:800;">Click SPIN to start</div>
-      </div>
-
-      <div style="position:relative; margin-top:12px;">
-        <div id="spinStrip" style="height:140px; display:flex; gap:12px; align-items:center; overflow:hidden; padding:10px;"></div>
-        <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:6px; height:120px; border-radius:6px; background:linear-gradient(180deg, #ff0000, #dc143c); box-shadow: 0 0 30px rgba(255,0,0,.8), 0 0 15px rgba(255,0,0,1); pointer-events:none;"></div>
-      </div>
-
-      <!-- Display for landed gun -->
-      <div id="landedGunDisplay" style="display:none; margin-top:16px; padding:16px; background:rgba(0,0,0,.6); border:2px solid rgba(220,20,60,.5); border-radius:10px; text-align:center;">
-        <div style="font-weight:900; color:var(--accent); margin-bottom:8px;">YOU GOT:</div>
-        <div style="display:flex; align-items:center; justify-content:center; gap:16px;">
-          <img id="landedGunImage" src="" style="max-width:100px; max-height:80px; object-fit:contain;">
-          <div>
-            <div id="landedGunName" style="font-weight:900; font-size:18px; color:white;"></div>
-            <div id="landedGunRarity" style="font-weight:700; font-size:14px; margin-top:4px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
-        <button class="btn" id="closeSpin">Close</button>
-        <button class="btn drop" id="spinStartBtn">SPIN</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Victory Frame -->
-  <div id="victoryFrame" class="victory-overlay" style="display:none;">
-    <div class="victory-card">
-      <div class="victory-header">
-        <h2 id="victoryHeaderText">YOU GOT:</h2>
-        <div class="victory-count" id="victoryCount">4 ITEMS</div>
-      </div>
-      <div class="victory-content">
-        <div class="victory-items-grid" id="victoryItemsGrid">
-          <!-- Items will be inserted here dynamically -->
-        </div>
-      </div>
-      <button class="victory-collect-btn" id="victoryCollectBtn">COLLECT ALL</button>
-    </div>
-  </div>
-
-  <!-- weapon popup -->
-  <div id="weaponPopup" class="weapon-popup hidden" aria-hidden="true">
-    <div class="weapon-popup-inner" role="dialog" aria-modal="true">
-      <div class="weapon-popup-header">
-        <h2 id="weaponPopupName">Weapon</h2>
-        <div id="weaponPopupRarity" class="rarity-tag">COMMON</div>
-      </div>
-
-      <div class="weapon-popup-body">
-        <img id="weaponPopupImage" class="weapon-popup-image" src="" alt="weapon image">
-        <div class="weapon-stats-grid">
-          <div class="stat-card stat-card-1 stat-card-large">
-            <div class="stat-title">Damage</div>
-            <div id="statDamage" class="stat-value">-</div>
-          </div>
-          <div class="stat-card stat-card-2 stat-card-large">
-            <div class="stat-title">Fire Rate</div>
-            <div id="statFire" class="stat-value">-</div>
-          </div>
-          <div class="stat-card stat-card-3">
-            <div class="stat-title">Ammo</div>
-            <div id="statAmmo" class="stat-value">-</div>
-          </div>
-          <div class="stat-card stat-card-4">
-            <div class="stat-title">Magazine</div>
-            <div id="statMagazine" class="stat-value">-</div>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:12px; display:flex; justify-content:flex-end;">
-        <button class="btn" onclick="closeWeaponPopup()">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- stats modal (fallback) -->
-  <div class="modal-overlay" id="statsModal" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div id="statsTitle" style="font-weight:900;"></div>
-        <button class="btn" id="closeStats"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div style="display:flex; gap:12px; margin-top:12px;">
-        <div style="flex:0 0 220px; height:140px; border-radius:10px; overflow:hidden; background:rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center;">
-          <img id="statsImg" src="" alt="" style="max-width:100%; max-height:100%; object-fit:contain;">
-        </div>
-        <div style="flex:1;">
-          <div id="statsRarity" style="color:var(--muted); font-weight:900;"></div>
-          <div id="statsDetails" style="margin-top:12px; color:var(--muted);"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- background audio (extracted) -->
-  <audio id="bgm" src="background_audio.mp3" loop preload="auto"></audio>
-
-<script>
-/* Single-file Quaker City (Option B) */
-
-/* ============= SUPABASE CONFIGURATION ============= */
-// TODO: Replace these with your actual Supabase credentials
-// Get them from: https://supabase.com → Your Project → Settings → API
-const SUPABASE_URL = 'https://nuspjghelmpqwvbxienl.supabase.co'; // CORRECTED: Your actual API URL
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3BqZ2hlbG1wcXd2YnhpZW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzNTcxNDcsImV4cCI6MjA4MDkzMzE0N30.SMEYGk_cNoGW8IVRlj9nBU_aKWbzOcwf_rv_9ydvyxQ'; // Your anon/public key
-
-let supabase;
-let useSupabase = false; // Will auto-enable when credentials are set
-let threadCache = null;
-let threadCacheTime = 0;
-const CACHE_DURATION = 30000; // Cache threads for 30 seconds
-
-// Initialize Supabase if credentials are provided
-if (SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL.includes('.supabase.co')) {
-  try {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    useSupabase = true;
-    console.log('✅ Supabase connected - Forum data will be synced globally');
-  } catch (e) {
-    console.warn('Supabase initialization failed, using localStorage:', e);
-  }
-} else {
-  console.warn('⚠️ Supabase not configured - Using localStorage (device-specific data)');
-  console.warn('To enable global sync: Add your Supabase credentials in the code');
-}
-
-/* ---------------- IMAGE MAP (fixed) ---------------- */
-const IMAGES = {
-
-  /* -------------------- TIER 1 COMMON GUNS -------------------- */
-  'Beretta': 'images/Beretta.png',
-  'G26': 'images/G26.png',
-  'G2C T1': 'images/G2C T1.png',
-  'G41 Tier 1': 'images/G41 Tier 1.png',
-  'G43': 'images/G43.png',
-  'S XD9': 'images/S XD9.png',
-  'TP9': 'images/TP9.png',
-  'Taurus Civilian': 'images/Taurus Civilian.png'
-};
-
-const FALLBACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="240"%3E%3Crect fill="%23333" width="400" height="240"/%3E%3Ctext x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
-
-/* ---------------- WEAPON STATS (updated damage by rarity) ---------------- */
-const WEAPON_STATS = {
-  /* ---------------- TIER 1 COMMON GUNS ---------------- */
-  'Beretta': { damage: 25, fire: 750, ammo: '9mm', magStd: 15, magExt: 30 },
-  'G26': { damage: 25, fire: 740, ammo: '9mm', magStd: 10, magExt: 20 },
-  'G2C T1': { damage: 25, fire: 750, ammo: '9mm', magStd: 12, magExt: 24 },
-  'G41 Tier 1': { damage: 25, fire: 760, ammo: '.45 ACP', magStd: 13, magExt: 26 },
-  'G43': { damage: 25, fire: 710, ammo: '9mm', magStd: 10, magExt: 20 },
-  'S XD9': { damage: 25, fire: 730, ammo: '9mm', magStd: 16, magExt: 32 },
-  'TP9': { damage: 25, fire: 740, ammo: '9mm', magStd: 18, magExt: 36 },
-  'Taurus Civilian': { damage: 25, fire: 720, ammo: '9mm', magStd: 15, magExt: 30 }
-};
-
-/* ---------------- DRUG PRICES ---------------- */
-const DRUG_PRICES = {
-  'Weed': { price: '$200–$750' },
-  'Shrooms': { price: '$500–$750' },
-  'Xanax': { price: '$700–$1,100' },
-  'Perc 20s': { price: '$700–$1,000' },
-  'Perc 30s': { price: '$1,200–$2,500' },
-  'Green': { price: '$900–$1,800' },
-  'Tris': { price: '$2,000–$3,500' },
-  'Quagen': { price: '$3,500–$6,500' },
-  'Wockhardt': { price: '$4,000–$7,000' },
-  'PCP': { price: '$7,000–$10,000' }
-};
-
-/* ---------------- ITEMS dataset ---------------- */
-const ITEMS = {
-  testdrops: [
-    { name:'Beretta', rarity:'common', category:'Pistols', img:IMAGES['Beretta'] || FALLBACK },
-    { name:'G26', rarity:'common', category:'Pistols', img:IMAGES['G26'] || FALLBACK },
-    { name:'G2C T1', rarity:'common', category:'Pistols', img:IMAGES['G2C T1'] || FALLBACK },
-    { name:'G41 Tier 1', rarity:'common', category:'Pistols', img:IMAGES['G41 Tier 1'] || FALLBACK },
-    { name:'G43', rarity:'common', category:'Pistols', img:IMAGES['G43'] || FALLBACK },
-    { name:'S XD9', rarity:'common', category:'Pistols', img:IMAGES['S XD9'] || FALLBACK },
-    { name:'TP9', rarity:'common', category:'Pistols', img:IMAGES['TP9'] || FALLBACK },
-    { name:'Taurus Civilian', rarity:'common', category:'Pistols', img:IMAGES['Taurus Civilian'] || FALLBACK }
-  ],
-  drugs: [
-    { name:'Weed', rarity:'common', category:'Common', img:FALLBACK },
-    { name:'Shrooms', rarity:'common', category:'Common', img:FALLBACK },
-    { name:'Xanax', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
-    { name:'Perc 20s', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
-    { name:'Perc 30s', rarity:'rare', category:'Rare', img:FALLBACK },
-    { name:'Green', rarity:'rare', category:'Rare', img:FALLBACK },
-    { name:'Tris', rarity:'epic', category:'Epic', img:FALLBACK },
-    { name:'Quagen', rarity:'epic', category:'Epic', img:FALLBACK },
-    { name:'Wockhardt', rarity:'legendary', category:'Legendary', img:FALLBACK },
-    { name:'PCP', rarity:'legendary', category:'Legendary', img:FALLBACK }
-  ]
-};
-
-/* weights */
-const DEFAULT_WEIGHTS = {
-  testdrops: { common:100 },
-  drugs: { common:35, uncommon:25, rare:25, epic:15 }
-};
-
-/* ---------- DOM refs ---------- */
-let itemGrid = document.getElementById('itemGrid'); // let so can rebind
-const contentArea = document.getElementById('contentArea');
-const subtabsEl = document.getElementById('subtabs');
-const filterSelect = document.getElementById('filterSelect');
-const dropBtn = document.getElementById('dropBtn');
-const viewDropsBtn = document.getElementById('viewDropsBtn');
-const acquiredGrid = document.getElementById('acquiredGrid');
-const spinModal = document.getElementById('spinModal');
-const spinStrip = document.getElementById('spinStrip');
-const spinStartBtn = document.getElementById('spinStartBtn');
-const closeSpin = document.getElementById('closeSpin');
-const landedGunDisplay = document.getElementById('landedGunDisplay');
-const landedGunImage = document.getElementById('landedGunImage');
-const landedGunName = document.getElementById('landedGunName');
-const landedGunRarity = document.getElementById('landedGunRarity');
-
-const musicToggle = document.getElementById('musicToggle');
-const musicLabel = document.getElementById('musicLabel');
-const bgm = document.getElementById('bgm');
-
-const userProfile = document.getElementById('userProfile');
-const userDisplayName = document.getElementById('userDisplayName');
-
-const statsModal = document.getElementById('statsModal');
-const statsTitle = document.getElementById('statsTitle');
-const statsImg = document.getElementById('statsImg');
-const statsRarity = document.getElementById('statsRarity');
-const statsDetails = document.getElementById('statsDetails');
-const closeStats = document.getElementById('closeStats');
-
-const weaponPopup = document.getElementById('weaponPopup');
-const weaponPopupName = document.getElementById('weaponPopupName');
-const weaponPopupRarity = document.getElementById('weaponPopupRarity');
-const weaponPopupImage = document.getElementById('weaponPopupImage');
-const statDamage = document.getElementById('statDamage');
-const statFire = document.getElementById('statFire');
-const statAmmo = document.getElementById('statAmmo');
-const statMagazine = document.getElementById('statMagazine');
-
-let activeTab = 'testdrops';
-let activeSub = 'All';
-let acquired = [];
-let spinning = false;
-
-/* ---------- helpers ---------- */
-function tick(ms){ return new Promise(r=> setTimeout(r,ms)); }
-function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function loadCfg(){ try{return JSON.parse(localStorage.getItem('qc_cfg')||'{}')}catch(e){return{}} }
-function saveCfg(c){ localStorage.setItem('qc_cfg', JSON.stringify(c)); }
-function getWeights(){ const c = loadCfg(); return c.weights || DEFAULT_WEIGHTS; }
-function setWeights(w){ const c = loadCfg(); c.weights = w; saveCfg(c); }
-
-/* ============= SUPABASE DATABASE FUNCTIONS ============= */
-async function getThreadsFromDB() {
-  if (!useSupabase) {
-    return JSON.parse(localStorage.getItem('forum_threads') || '[]');
-  }
-  
-  try {
-    const { data, error } = await supabase
-      .from('threads')
-      .select('*')
-      .order('created_at', { ascending: false });
+    <!-- Background Elements -->
+    <div id="bgDark"></div>
+    <img id="bgEmblem" src="https://media.discordapp.net/attachments/1295535835822690395/1448475089158013118/behindbar.png?ex=693b650c&is=693a138c&hm=5c2bf4de45a24fa76704b342a96e5029387426b56f0228ce1515a1afc0e7cc28&=&format=webp&quality=lossless&width=830&height=621" alt="Behind Bars Logo" onerror="this.style.display='none'">
     
-    if (error) throw error;
-    return data || [];
-  } catch (e) {
-    console.error('Error fetching threads:', e);
-    return JSON.parse(localStorage.getItem('forum_threads') || '[]');
-  }
-}
-
-async function saveThreadToDB(thread) {
-  if (!useSupabase) {
-    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-    threads.push(thread);
-    localStorage.setItem('forum_threads', JSON.stringify(threads));
-    return thread;
-  }
-  
-  try {
-    const { data, error } = await supabase
-      .from('threads')
-      .insert([{
-        id: thread.id,
-        title: thread.title,
-        scheme_type: thread.schemeType,
-        thread_type: thread.threadType,
-        author: thread.author,
-        video_url: thread.videoUrl,
-        video_type: thread.videoType,
-        comments: thread.comments || [],
-        created_at: thread.date
-      }])
-      .select()
-      .single();
-    
-    if (error) throw error;
-    return data;
-  } catch (e) {
-    console.error('Error saving thread:', e);
-    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-    threads.push(thread);
-    localStorage.setItem('forum_threads', JSON.stringify(threads));
-    threadCache = null; // Clear cache
-    return thread;
-  }
-}
-
-async function updateThreadInDB(threadId, updates) {
-  if (!useSupabase) {
-    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-    const idx = threads.findIndex(t => t.id === threadId);
-    if (idx !== -1) {
-      threads[idx] = { ...threads[idx], ...updates };
-      localStorage.setItem('forum_threads', JSON.stringify(threads));
-      threadCache = null; // Clear cache
-    }
-    return;
-  }
-  
-  try {
-    const { error } = await supabase
-      .from('threads')
-      .update(updates)
-      .eq('id', threadId);
-    
-    if (error) throw error;
-  } catch (e) {
-    console.error('Error updating thread:', e);
-    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-    const idx = threads.findIndex(t => t.id === threadId);
-    if (idx !== -1) {
-      threads[idx] = { ...threads[idx], ...updates };
-      localStorage.setItem('forum_threads', JSON.stringify(threads));
-      threadCache = null; // Clear cache
-    }
-  }
-}
-
-async function deleteThreadFromDB(threadId) {
-  if (!useSupabase) {
-    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-    const filtered = threads.filter(t => t.id !== threadId);
-    localStorage.setItem('forum_threads', JSON.stringify(filtered));
-    threadCache = null; // Clear cache
-    return;
-  }
-  
-  try {
-    const { error } = await supabase
-      .from('threads')
-      .delete()
-      .eq('id', threadId);
-    
-    if (error) throw error;
-  } catch (e) {
-    console.error('Error deleting thread:', e);
-    const threads = JSON.parse(localStorage.getItem('forum_threads') || '[]');
-    const filtered = threads.filter(t => t.id !== threadId);
-    localStorage.setItem('forum_threads', JSON.stringify(filtered));
-    threadCache = null; // Clear cache
-  }
-}
-
-async function getUsersFromDB() {
-  if (!useSupabase) {
-    return JSON.parse(localStorage.getItem('forum_users') || '[]');
-  }
-  
-  try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*');
-    
-    if (error) throw error;
-    return data || [];
-  } catch (e) {
-    console.error('Error fetching users:', e);
-    return JSON.parse(localStorage.getItem('forum_users') || '[]');
-  }
-}
-
-async function saveUserToDB(user) {
-  if (!useSupabase) {
-    const users = JSON.parse(localStorage.getItem('forum_users') || '[]');
-    users.push(user);
-    localStorage.setItem('forum_users', JSON.stringify(users));
-    return;
-  }
-  
-  try {
-    const { error } = await supabase
-      .from('users')
-      .insert([user]);
-    
-    if (error) throw error;
-  } catch (e) {
-    console.error('Error saving user:', e);
-    const users = JSON.parse(localStorage.getItem('forum_users') || '[]');
-    users.push(user);
-    localStorage.setItem('forum_users', JSON.stringify(users));
-  }
-}
-
-/* ---------- user profile ---------- */
-function updateUserProfile(){
-  const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
-  if(currentUser){
-    userProfile.style.display = 'inline-flex';
-    userDisplayName.textContent = currentUser.username;
-  } else {
-    userProfile.style.display = 'none';
-  }
-}
-
-if(userProfile){
-  userProfile.addEventListener('click', ()=>{
-    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
-    if(currentUser){
-      showUserProfileModal(currentUser);
-    }
-  });
-}
-
-/* ---------- subtabs sets ---------- */
-const SUBTABS = {
-  testdrops: ['All','Pistols','SMG'],
-  drugs: ['All','Common','Rare'],
-  roe: ['All']
-};
-function renderSubtabs(tab){
-  subtabsEl.innerHTML = '';
-  const arr = SUBTABS[tab] || ['All'];
-  arr.forEach((s,i)=>{
-    const el = document.createElement('div');
-    el.className = 'sub' + (i===0 ? ' active' : '');
-    el.textContent = s;
-    el.dataset.sub = s;
-    el.addEventListener('click', ()=> {
-      document.querySelectorAll('.subtabs .sub').forEach(x=> x.classList.remove('active'));
-      el.classList.add('active');
-      activeSub = s;
-      renderGrid();
-    });
-    subtabsEl.appendChild(el);
-  });
-  activeSub = arr[0];
-  
-  // Update filter dropdown based on tab
-  if(tab === 'testdrops') {
-    filterSelect.innerHTML = `
-      <option value="all">All</option>
-      <option value="common">Common</option>
-      <option value="uncommon">Uncommon</option>
-      <option value="rare">Rare</option>
-      <option value="epic">Epic</option>
-    `;
-  } else if(tab === 'drugs') {
-    filterSelect.innerHTML = `
-      <option value="all">All</option>
-      <option value="common">Common</option>
-      <option value="uncommon">Uncommon</option>
-      <option value="rare">Rare</option>
-      <option value="epic">Epic</option>
-    `;
-  } else {
-    filterSelect.innerHTML = `
-      <option value="all">All</option>
-      <option value="common">Common</option>
-      <option value="uncommon">Uncommon</option>
-      <option value="rare">Rare</option>
-      <option value="epic">Epic</option>
-    `;
-  }
-}
-
-/* ---------- filtering ---------- */
-function itemsForTab(tab){
-  const all = (ITEMS[tab] || []).slice();
-  const filter = filterSelect.value;
-  let res = all;
-  if(filter !== 'all') res = res.filter(i => i.rarity === filter);
-  if(activeSub && activeSub !== 'All'){
-    res = res.filter(i=>{
-      const cat = (i.category||'').toLowerCase();
-      const s = activeSub.toLowerCase();
-      if(s === 'smg') return cat.includes('smg');
-      if(s === 'pistols') return cat.includes('pist');
-      return cat.includes(s);
-    });
-  }
-  return res;
-}
-
-/* create card (clean) */
-function createCard(item){
-  const el = document.createElement('div');
-  el.className = 'card';
-  el.innerHTML = `
-    <div class="top-row"><div class="name">${item.name}</div></div>
-    <div class="img-wrap"><img loading="lazy" src="${item.img}" alt="${item.name}" onerror="this.src='${FALLBACK}'"></div>
-    <div style="height:8px"></div>
-    <div class="badge">${(item.rarity||'common').toUpperCase()}</div>
-  `;
-  el.addEventListener('click', ()=> openWeaponPopupFromCard(item));
-  return el;
-}
-
-/* render grid */
-async function renderGrid(forceRefresh = false){
-  const nodes = itemsForTab(activeTab);
-
-  // Handle Forums tab
-  if(activeTab === 'forums'){
-    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
-    const allThreads = await getThreadsFromDB(forceRefresh);
-    
-    if(!currentUser){
-      // Show login/register screen
-      contentArea.innerHTML = `
-        <div style="max-width:600px; margin:40px auto; padding:24px;">
-          <div style="background:linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.5)); border:2px solid var(--accent); border-radius:16px; padding:40px; backdrop-filter:blur(12px);">
-            <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center;">
-              <i class="fa-solid fa-user-lock"></i> Forum Access
-            </h2>
-            
-            <div id="authTabs" style="display:flex; gap:10px; margin-bottom:24px; justify-content:center;">
-              <button class="btn drop" id="showLogin" style="padding:12px 24px;">Login</button>
-              <button class="btn" id="showRegister" style="padding:12px 24px;">Register</button>
-            </div>
-
-            <!-- Login Form -->
-            <div id="loginForm">
-              <div style="margin-bottom:16px;">
-                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Username</label>
-                <input type="text" id="loginUsername" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Enter username">
-              </div>
-              <div style="margin-bottom:24px;">
-                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Password</label>
-                <input type="password" id="loginPassword" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Enter password">
-              </div>
-              <button class="btn drop" id="loginBtn" style="width:100%; padding:14px; font-size:16px;">Login</button>
-              <div id="loginError" style="color:#ff4444; margin-top:12px; text-align:center; display:none;"></div>
-            </div>
-
-            <!-- Register Form -->
-            <div id="registerForm" style="display:none;">
-              <div style="margin-bottom:16px;">
-                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Username</label>
-                <input type="text" id="regUsername" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Choose username">
-              </div>
-              <div style="margin-bottom:16px;">
-                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Password</label>
-                <input type="password" id="regPassword" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Choose password">
-              </div>
-              <div style="margin-bottom:24px;">
-                <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Confirm Password</label>
-                <input type="password" id="regConfirm" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,.4); color:var(--text); font-family:inherit;" placeholder="Confirm password">
-              </div>
-              <button class="btn drop" id="registerBtn" style="width:100%; padding:14px; font-size:16px;">Create Account</button>
-              <div id="registerError" style="color:#ff4444; margin-top:12px; text-align:center; display:none;"></div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      // Auth tab switching
-      document.getElementById('showLogin').addEventListener('click', () => {
-        document.getElementById('loginForm').style.display = 'block';
-        document.getElementById('registerForm').style.display = 'none';
-        document.getElementById('showLogin').classList.add('drop');
-        document.getElementById('showRegister').classList.remove('drop');
-      });
-      document.getElementById('showRegister').addEventListener('click', () => {
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('registerForm').style.display = 'block';
-        document.getElementById('showLogin').classList.remove('drop');
-        document.getElementById('showRegister').classList.add('drop');
-      });
-
-      // Login handler
-      document.getElementById('loginBtn').addEventListener('click', async () => {
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPassword').value;
-        const users = await getUsersFromDB();
-        const user = users.find(u => u.username === username && u.password === password);
-        
-        if(user){
-          localStorage.setItem('forum_current_user', JSON.stringify({username: user.username}));
-          updateUserProfile();
-          renderGrid();
-        } else {
-          const err = document.getElementById('loginError');
-          err.textContent = 'Invalid username or password';
-          err.style.display = 'block';
-        }
-      });
-
-      // Register handler
-      document.getElementById('registerBtn').addEventListener('click', async () => {
-        const username = document.getElementById('regUsername').value.trim();
-        const password = document.getElementById('regPassword').value;
-        const confirm = document.getElementById('regConfirm').value;
-        const err = document.getElementById('registerError');
-        
-        if(!username || !password){
-          err.textContent = 'Please fill all fields';
-          err.style.display = 'block';
-          return;
-        }
-        if(password !== confirm){
-          err.textContent = 'Passwords do not match';
-          err.style.display = 'block';
-          return;
-        }
-        
-        const users = await getUsersFromDB();
-        if(users.find(u => u.username === username)){
-          err.textContent = 'Username already exists';
-          err.style.display = 'block';
-          return;
-        }
-        
-        await saveUserToDB({username, password});
-        localStorage.setItem('forum_current_user', JSON.stringify({username}));
-        updateUserProfile();
-        renderGrid();
-      });
-      
-      return;
-    }
-
-    // User is logged in - show forums
-    contentArea.innerHTML = `
-      <div style="max-width:1200px; margin:0 auto; padding:24px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-          <div>
-            <h2 style="color:var(--accent); font-weight:900; font-size:32px; margin:0;">
-              <i class="fa-solid fa-comments"></i> Forums
-            </h2>
-            <div style="color:var(--muted); margin-top:8px;">Welcome, <strong style="color:var(--accent);">${currentUser.username}</strong></div>
-          </div>
-          <div style="display:flex; gap:12px;">
-            <button class="btn drop" id="newThreadBtn"><i class="fa-solid fa-plus"></i>&nbsp;New Thread</button>
-            <button class="btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout</button>
-          </div>
-        </div>
-
-        <!-- Thread List -->
-        <div id="threadList">
-          ${allThreads.length === 0 ? `
-            <div style="background:rgba(80,80,80,.5); border:1px solid var(--glass-border); border-radius:12px; padding:40px; text-align:center; color:var(--muted);">
-              <i class="fa-solid fa-inbox" style="font-size:48px; margin-bottom:16px; display:block;"></i>
-              <div style="font-size:18px; font-weight:700;">No threads yet</div>
-              <div style="margin-top:8px;">Be the first to create a thread!</div>
-            </div>
-          ` : allThreads.map((thread, idx) => `
-            <div class="thread-card" data-idx="${idx}" style="background:linear-gradient(180deg,rgba(100,100,100,.3),rgba(90,90,90,.2)); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='var(--glass-border)'; this.style.transform='translateY(0)';">
-              <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
-                <div>
-                  <h3 style="color:var(--text); font-weight:900; font-size:20px; margin:0 0 8px 0;">${thread.title}</h3>
-                  <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                    <span style="background:rgba(220,20,60,.2); color:var(--accent); padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700;">${thread.schemeType}</span>
-                    <span style="background:rgba(0,71,171,.2); color:#4a9eff; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700;">${thread.threadType}</span>
-                  </div>
+    <!-- Main Content Wrapper -->
+    <div class="wrap">
+        <!-- Main Container -->
+        <div class="container">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="title">Behind Bars</h1>
+                    <p class="subtitle">Premium Bicycle Shop & Community</p>
+                    
+                    <!-- Top Navigation -->
+                    <nav class="topnav">
+                        <button class="cat active" data-category="home">
+                            <i class="fas fa-home"></i> Home
+                        </button>
+                        <button class="cat" data-category="shop">
+                            <i class="fas fa-bicycle"></i> Shop
+                        </button>
+                        <button class="cat" data-category="services">
+                            <i class="fas fa-tools"></i> Services
+                        </button>
+                        <button class="cat" data-category="forum">
+                            <i class="fas fa-comments"></i> Forum
+                        </button>
+                        <button class="cat" data-category="about">
+                            <i class="fas fa-info-circle"></i> About
+                        </button>
+                        <button class="cat" data-category="contact">
+                            <i class="fas fa-envelope"></i> Contact
+                        </button>
+                    </nav>
                 </div>
-                <div style="text-align:right;">
-                  <div style="color:var(--muted); font-size:13px;">by <strong style="color:var(--accent);">${thread.author}</strong></div>
-                  <div style="color:var(--muted); font-size:12px; margin-top:4px;">${new Date(thread.date).toLocaleDateString()}</div>
-                </div>
-              </div>
-              ${thread.videoUrl ? `<div style="color:var(--muted); font-size:14px;"><i class="fa-solid fa-video" style="color:var(--accent); margin-right:6px;"></i>Contains video</div>` : ''}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-
-    // Logout handler
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('forum_current_user');
-      updateUserProfile();
-      renderGrid();
-    });
-
-    // New thread button
-    document.getElementById('newThreadBtn').addEventListener('click', () => {
-      showNewThreadModal(currentUser.username);
-    });
-
-    // Thread click handlers
-    document.querySelectorAll('.thread-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const idx = parseInt(card.dataset.idx);
-        showThreadModal(allThreads[idx]);
-      });
-    });
-
-    return;
-  }
-
-  // Handle Schemes tab
-  if(activeTab === 'schemes'){
-    contentArea.innerHTML = `
-      <div style="max-width:1000px; margin:0 auto; padding:24px;">
-        <div style="background:linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(10, 5, 20, 0.95) 50%, rgba(10, 10, 26, 0.95) 100%); border:3px solid transparent; border-radius:20px; padding:32px; backdrop-filter:blur(12px); box-shadow: 0 10px 40px rgba(220, 20, 60, 0.3), inset 0 0 50px rgba(0, 0, 0, 0.5); position:relative; overflow:hidden;">
-          <div style="position:absolute; inset:0; padding:3px; border-radius:20px; background:linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity:0.6; pointer-events:none;"></div>
-          <h2 style="color:var(--text); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center; background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.5)); position:relative; z-index:1;">
-            <i class="fa-solid fa-file-pen"></i> Illegal Civilian Scheme Submission Guidelines
-          </h2>
-          
-          <div style="color:var(--text); line-height:1.8; font-size:16px;">
-            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(0, 71, 171, 0.15) 100%); border:2px solid transparent; border-radius:12px; padding:24px; margin-bottom:28px; position:relative; overflow:hidden;">
-              <div style="position:absolute; inset:0; padding:2px; border-radius:12px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.6) 0%, rgba(0, 71, 171, 0.6) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;"></div>
-              <p style="margin:0 0 16px 0; font-weight:700; font-size:18px; position:relative; z-index:1;">
-                Welcome to the thread submission channel for your illegal civilian schemes! This is where all <strong style="color:var(--accent);">Scammer</strong>, <strong style="color:var(--accent);">Racer</strong>, and <strong style="color:var(--accent);">Drug Dealer</strong> threads must begin.
-              </p>
-              <p style="margin:0; color:var(--muted); position:relative; z-index:1;">
-                Please read the guidelines carefully before submitting.
-              </p>
-            </div>
-
-            <div style="margin-bottom:28px; position:relative; z-index:1;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:8px;">
-                <i class="fa-solid fa-check-circle"></i> Submission Requirements
-              </h3>
-              <p style="margin-bottom:16px; color:var(--muted);">
-                When you submit your thread, ensure you clearly include the following four pieces of information in your initial post:
-              </p>
-              <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Thread Name/Title:</strong> Be specific and creative.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Scheme Type:</strong> Clearly state if this is a <strong>Scammer</strong>, <strong>Racer</strong>, or <strong>Drug Dealer</strong> scheme.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Thread Type:</strong> State whether it is an <strong>Individual (I)</strong> or <strong>Group (G)</strong> thread.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Roleplay Focus:</strong> Describe the specific goal or scenario your roleplay will revolve around. Be creative and put effort into it!
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Eligibility:</strong> Ensure you are eligible for the Tier/Type you are requesting based on your character's current status and history.
-                </li>
-                <li style="padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Limit:</strong> Remember the Attack Limit on your chosen scheme (e.g., 1 or 2 per week).
-                </li>
-              </ul>
-            </div>
-
-            <div style="margin-bottom:24px; position:relative; z-index:1;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:8px;">
-                <i class="fa-solid fa-arrow-right"></i> What Happens Next? (Ticket System)
-              </h3>
-              <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Review:</strong> A staff member will review your submission in this channel.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Approval & Move:</strong> If your submission is accepted, staff will:
-                  <ul style="list-style:none; padding:0; margin-top:8px; margin-left:20px;">
-                    <li style="margin-bottom:8px; color:var(--muted);">• Place a check mark reaction (✅) on your submission post.</li>
-                    <li style="margin-bottom:8px; color:var(--muted);">• Create a private ticket channel for your thread.</li>
-                    <li style="color:var(--muted);">• Add you (and any listed participants) to that ticket channel.</li>
-                  </ul>
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Roleplay:</strong> Continue your thread only within the private ticket channel until the scenario is complete.
-                </li>
-                <li style="padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
-                  <strong style="color:var(--accent);">Drops:</strong> The Illegal Civilian Team + Management will track the Roleplay in the ticket and determine drops upon completion.
-                </li>
-              </ul>
-            </div>
-
-            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(0, 71, 171, 0.15) 100%); border-left:4px solid transparent; border-image:linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding:20px; border-radius:8px; margin-top:32px; position:relative; z-index:1;">
-              <p style="margin:0; font-weight:700; font-size:18px;">
-                <i class="fa-solid fa-lightbulb"></i> <strong>Reminder:</strong>
-              </p>
-              <p style="margin:8px 0 0 0; color:var(--muted);">
-                All submissions must follow these guidelines. Incomplete or unclear submissions may be rejected or delayed. 
-                Put effort into your thread concept to ensure approval and great roleplay!
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  // Handle The Spot tab
-  if(activeTab === 'spot'){
-    contentArea.innerHTML = `
-      <div style="max-width:1100px; margin:0 auto; padding:24px;">
-        <div style="background:linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(10, 5, 20, 0.95) 50%, rgba(10, 10, 26, 0.95) 100%); border:3px solid transparent; border-radius:20px; padding:40px; backdrop-filter:blur(16px); box-shadow: 0 10px 40px rgba(220,20,60,0.3), inset 0 0 50px rgba(0,0,0,0.5); position:relative; overflow:hidden;">
-          <div style="position:absolute; inset:0; padding:3px; border-radius:20px; background:linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity:0.6; pointer-events:none;"></div>
-          
-          <!-- Header Section -->
-          <div style="text-align:center; margin-bottom:36px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:28px; position:relative; z-index:1;">
-            <div style="font-size:14px; color:var(--accent); font-weight:800; letter-spacing:3px; margin-bottom:12px;">
-              <i class="fa-solid fa-bullhorn"></i> OFFICIAL ANNOUNCEMENT
-            </div>
-            <h2 style="color:var(--text); font-weight:900; font-size:42px; margin:0; background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.5));">
-              <i class="fa-solid fa-location-dot" style="color:var(--accent);"></i> The Spot
-            </h2>
-            <div style="color:var(--muted); font-size:18px; margin-top:12px; font-weight:700;">
-              A New Player-Run Black Market System for Serious Roleplay
-            </div>
-          </div>
-
-          <div style="color:var(--text); line-height:1.9; font-size:16px;">
-            
-            <!-- Quote Section -->
-            <div style="background:rgba(0,0,0,0.5); border-left:5px solid var(--accent); padding:20px 24px; margin-bottom:32px; border-radius:8px; font-style:italic;">
-              <p style="margin:0; color:var(--muted); font-size:17px; font-weight:600;">
-                "In New York, everyone knows the rule:<br>
-                If you want heavy items, you go out of town — Upstate, Jersey, PA, Connecticut.<br>
-                NYC is watched, the blocks are hot, and nothing comes easy."
-              </p>
-            </div>
-
-            <p style="margin-bottom:20px; color:var(--muted);">
-              In FiveM, the map may be limited, but our creativity isn't. That's where <strong style="color:var(--accent);">The Spot</strong> comes in.
-            </p>
-
-            <p style="margin-bottom:32px; color:var(--muted);">
-              Born from a conversation between <strong style="color:var(--accent);">Adxt</strong> and <strong style="color:var(--accent);">Walking</strong>, The Spot is designed to bring a realistic, immersive, street-driven experience to how civilians access guns and drugs — without relying on factions, menus, or NPCs.
-            </p>
-
-            <!-- What Is The Spot -->
-            <div style="margin-bottom:32px;">
-              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
-                <i class="fa-solid fa-fire"></i> What Is The Spot?
-              </h3>
-              
-              <div style="background:rgba(220,20,60,0.08); border:2px solid rgba(220,20,60,0.3); border-radius:12px; padding:24px; margin-bottom:20px;">
-                <p style="margin:0 0 16px 0; font-weight:700; font-size:18px; color:var(--text);">
-                  <strong style="color:var(--accent);">The Spot is a fully player-run system.</strong>
-                </p>
-                <p style="margin:0; color:var(--muted);">
-                  Instead of a ped, a location, or a crafting menu, Civ Management members will personally run The Spot, rotating through different areas of the city and handling drops face-to-face.
-                </p>
-              </div>
-
-              <p style="margin-bottom:16px; color:var(--muted);">
-                This creates a living, unpredictable black market where civilians must use:
-              </p>
-
-              <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px;">
-                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
-                  <i class="fa-solid fa-map" style="color:var(--accent); margin-right:8px;"></i>
-                  <strong>Street knowledge</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
-                  <i class="fa-solid fa-users" style="color:var(--accent); margin-right:8px;"></i>
-                  <strong>Networking</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
-                  <i class="fa-solid fa-user-secret" style="color:var(--accent); margin-right:8px;"></i>
-                  <strong>Low-key movement</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2);">
-                  <i class="fa-solid fa-comments" style="color:var(--accent); margin-right:8px;"></i>
-                  <strong>IC interactions</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.4); padding:14px; border-radius:10px; border:1px solid rgba(220,20,60,0.2); grid-column:1/-1;">
-                  <i class="fa-solid fa-brain" style="color:var(--accent); margin-right:8px;"></i>
-                  <strong>Smart roleplay</strong>
-                </div>
-              </div>
-
-              <div style="background:rgba(220,20,60,0.15); border-left:4px solid var(--accent); padding:16px; border-radius:8px;">
-                <p style="margin:0; font-weight:700; color:var(--text);">
-                  Nothing is handed out. Everything must be earned.
-                </p>
-              </div>
-            </div>
-
-            <!-- Serious RP Only -->
-            <div style="margin-bottom:32px;">
-              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
-                <i class="fa-solid fa-theater-masks"></i> Serious RP Only
-              </h3>
-              
-              <div style="background:rgba(0,71,171,0.1); border:2px solid rgba(0,71,171,0.4); border-radius:12px; padding:24px;">
-                <p style="margin:0 0 16px 0; color:var(--muted);">
-                  To keep quality high, <strong style="color:var(--accent);">The Spot is only available to players who consistently show strong, serious roleplay.</strong>
-                </p>
-                <p style="margin:0; color:var(--muted);">
-                  During the beta phase, access will be limited to a selected group of top RP'ers who will help set the tone and shape the system.
-                </p>
-              </div>
-            </div>
-
-            <!-- What This Means for PD -->
-            <div style="margin-bottom:32px;">
-              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
-                <i class="fa-solid fa-shield-halved"></i> What This Means for PD
-              </h3>
-              
-              <p style="margin-bottom:16px; color:var(--muted);">
-                Because The Spot is run entirely by real players, police roleplay becomes more dynamic and realistic:
-              </p>
-
-              <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px;">
-                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
-                  <i class="fa-solid fa-video" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
-                  <strong style="font-size:14px;">Surveillance</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
-                  <i class="fa-solid fa-comment-dots" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
-                  <strong style="font-size:14px;">Rumor tracking</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
-                  <i class="fa-solid fa-handcuffs" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
-                  <strong style="font-size:14px;">Interrogations</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
-                  <i class="fa-solid fa-file-contract" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
-                  <strong style="font-size:14px;">Search warrants</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
-                  <i class="fa-solid fa-car" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
-                  <strong style="font-size:14px;">Traffic stops</strong>
-                </div>
-                <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
-                  <i class="fa-solid fa-chart-line" style="color:var(--accent); font-size:20px; display:block; margin-bottom:8px;"></i>
-                  <strong style="font-size:14px;">Pattern recognition</strong>
-                </div>
-              </div>
-
-              <div style="background:rgba(220,20,60,0.1); border:2px solid rgba(220,20,60,0.3); border-radius:10px; padding:18px;">
-                <p style="margin:0; color:var(--muted); line-height:1.7;">
-                  There are no automatic alerts, no scripted locations, and no guaranteed catches.<br>
-                  <strong style="color:var(--accent);">If civilians slip up IC, they get caught. If they move smart, they stay safe.</strong>
-                </p>
-              </div>
-            </div>
-
-            <!-- A New Chapter -->
-            <div style="margin-bottom:32px;">
-              <h3 style="color:var(--accent); font-weight:900; font-size:26px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
-                <i class="fa-solid fa-city"></i> A New Chapter for Civilian RP
-              </h3>
-              
-              <p style="margin-bottom:16px; color:var(--muted);">
-                The Spot is the first step in a larger civilian pipeline built around creative, authentic New York roleplay.
-              </p>
-
-              <p style="margin-bottom:16px; color:var(--muted);">
-                It gives players a real path into the weapon and drug game — not shortcuts, not menus, but <strong style="color:var(--accent);">earned opportunities through RP, story, and connections.</strong>
-              </p>
-
-              <p style="margin:0; color:var(--muted);">
-                As this system grows, those who show the strongest roleplay will always be the first to experience new features.
-              </p>
-            </div>
-
-            <!-- Closing Statement -->
-            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(0, 71, 171, 0.15) 100%); border:3px solid transparent; border-radius:16px; padding:32px; text-align:center; box-shadow:0 10px 30px rgba(220,20,60,0.3); position:relative; overflow:hidden;">
-              <div style="position:absolute; inset:0; padding:3px; border-radius:16px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.7) 0%, rgba(0, 71, 171, 0.7) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;"></div>
-              <h2 style="background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.6)); font-weight:900; font-size:32px; margin:0 0 20px 0; position:relative; z-index:1;">
-                Welcome to The Spot
-              </h2>
-              <div style="font-size:19px; color:var(--text); font-weight:700; line-height:1.8; margin-bottom:24px;">
-                <div style="margin-bottom:8px;"><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Move smart.</div>
-                <div style="margin-bottom:8px;"><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Stay lowkey.</div>
-                <div><i class="fa-solid fa-check" style="color:var(--accent); margin-right:10px;"></i>Earn your lane.</div>
-              </div>
-              <div style="color:var(--muted); font-size:16px; font-weight:600; margin-top:24px; padding-top:20px; border-top:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; position:relative; z-index:1;">
-                — Adxt & Walking
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  // Handle ROE tab
-  if(activeTab === 'roe'){
-    contentArea.innerHTML = `
-      <div style="max-width:1000px; margin:0 auto; padding:24px;">
-        <div style="background:linear-gradient(135deg, rgba(26, 10, 10, 0.95) 0%, rgba(10, 5, 20, 0.95) 50%, rgba(10, 10, 26, 0.95) 100%); border:3px solid transparent; border-radius:20px; padding:32px; backdrop-filter:blur(12px); box-shadow: 0 10px 40px rgba(220, 20, 60, 0.3), inset 0 0 50px rgba(0, 0, 0, 0.5); position:relative; overflow:hidden;">
-          <div style="position:absolute; inset:0; padding:3px; border-radius:20px; background:linear-gradient(135deg, #dc143c 0%, #0047ab 50%, #dc143c 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity:0.6; pointer-events:none;"></div>
-          <h2 style="color:var(--text); font-weight:900; font-size:32px; margin-bottom:24px; text-align:center; background:linear-gradient(135deg, #ff4757 0%, #0084ff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(220, 20, 60, 0.5)); position:relative; z-index:1;">
-            <i class="fa-solid fa-scale-balanced"></i> TFB:RP Illegal Civilian Rules of Engagement
-          </h2>
-          
-          <div style="color:var(--text); line-height:1.8; font-size:16px;">
-            <div style="margin-bottom:24px;">
-              <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  Legal/Illegal Civilian's, must clearly identify the exact player you plan to engage with/attack if your target is inside a faction turf and or inside of a faction, ensure there are at least four faction members present (Including your target) before taking action. T1(Tier1) Civilians get two attacks per week, and T2(Tier2) Civilians get three, unless defending yourself or using an approved attack upgrade.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  Before attempting a kill, you must have a minimum of eight meaningful negative interactions with the character unless there is already established shooting beef. All attacks must be backed with Strong, Realistic escalation that Legal Civilian Management can confirm and approve.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  If a player disrespects your deceased associates, on the first interaction, you may only escalate to a robbery at that moment. <strong style="color:var(--accent);">(if you want BUT YOU CANNOT SHOOT)</strong> A kill is only allowed after eight+ neg interactions and enough story driven roleplay that makes the conflict deep and believable, simple insults alone are not considered proper escalation.
-                </li>
-              </ul>
-            </div>
-
-            <div style="margin-bottom:28px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.15) 0%, rgba(0, 71, 171, 0.15) 100%); border:2px solid transparent; border-radius:12px; padding:20px; position:relative; overflow:hidden;">
-              <div style="position:absolute; inset:0; padding:2px; border-radius:12px; background:linear-gradient(135deg, rgba(220, 20, 60, 0.6) 0%, rgba(0, 71, 171, 0.6) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;"></div>
-              <h3 style="color:var(--accent); font-weight:800; font-size:20px; margin-bottom:14px; position:relative; z-index:1;">
-                <i class="fa-solid fa-bullseye"></i> Attack Limits
-              </h3>
-              <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:10px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
-                  <strong>Tier 1 Illegal Civilian's</strong> = 2 attacks per week.
-                </li>
-                <li style="margin-bottom:10px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
-                  <strong>Tier 2 Illegal Civilian's</strong> = 3 attacks per week.
-                </li>
-                <li style="padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-star" style="position:absolute; left:8px; top:6px; font-size:8px; color:var(--accent);"></i>
-                  All actions must be logged properly and checked off by <strong>(Illegal Civ Team)</strong> inside your thread.
-                </li>
-              </ul>
-            </div>
-
-            <div style="margin-bottom:24px; position:relative; z-index:1;">
-              <h3 style="color:var(--accent); font-weight:800; font-size:22px; margin-bottom:16px; border-bottom:2px solid transparent; border-image:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding-bottom:8px;">
-                <i class="fa-solid fa-exclamation-triangle"></i> Important Rules
-              </h3>
-              <ul style="list-style:none; padding:0; margin:0;">
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  Every kill, shooting, and robbery, must be clipped and pinpointed. <strong style="color:var(--accent);">No clip = Situation may be voided.</strong> (if the player report's)
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  You may attack solo or alongside other approved Legal Civilians, Only those accepted into the Illegal Civilians scheme may participate in group attacks with you.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  Any hostile weapon interaction, including firing in someone's direction counts as an attack. <strong style="color:var(--accent);">( Each attack must be recorded with nvidia in your thread )</strong>
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  All attacks require a strong roleplay foundation, Poor or rushed escalation will result in punishments, including potential removal from the scheme. If you believe your death lacked escalation, you're free to submit a report.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  Driveby attacks from exotic vehicles, <strong>(Lambroghinis, Ferraris, ect.)</strong> are strictly blocked.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  All weapon usage must be portrayed realistically, Low effort or sloppy gun roleplay will not be tolerated.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  Legal Civilians may not act as "defense" for a faction on their turf. If the roleplay doesn't naturally justify your presence, you shouldn't be on their turf waiting for someone to spin. Legal Civilian Groups shouldn't camp turfs after being warned.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  If you join faction members in an attack, it still counts toward your weekly attack limit. Again only approved Legal Civilians can attack with factions.
-                </li>
-                <li style="margin-bottom:16px; padding-left:24px; position:relative;">
-                  <i class="fa-solid fa-circle" style="position:absolute; left:8px; top:8px; font-size:6px; color:var(--accent);"></i>
-                  Shooting Strictly For Roleplay, <strong>(Shooting Into The Sky)</strong> counts as a negative interaction, not an attack. But if you fire towards a player, it becomes an official attack.
-                </li>
-              </ul>
-            </div>
-
-            <div style="background:linear-gradient(135deg, rgba(220, 20, 60, 0.2) 0%, rgba(0, 71, 171, 0.15) 100%); border-left:4px solid transparent; border-image:linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%) 1; padding:20px; border-radius:8px; margin-top:32px; position:relative; z-index:1;">
-              <p style="margin:0; font-weight:700; font-size:18px;">
-                <i class="fa-solid fa-triangle-exclamation"></i> <strong>Remember:</strong>
-              </p>
-              <p style="margin:8px 0 0 0; color:var(--muted);">
-                All rules must be followed strictly. Failure to comply will result in punishments up to and including removal from the Illegal Civilian scheme. 
-                Keep all clips organized and submit them as required. Quality roleplay and proper escalation are mandatory.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  contentArea.innerHTML = `<div class="grid-wrap"><div class="grid" id="itemGrid" aria-live="polite"></div></div>`;
-  itemGrid = document.getElementById('itemGrid');
-  itemGrid.innerHTML = '';
-  if(nodes.length === 0){
-    itemGrid.innerHTML = '<div style="grid-column:1/-1; color:var(--muted); padding:18px; text-align:center;">No items in this category.</div>';
-    return;
-  }
-  nodes.forEach(it => itemGrid.appendChild(createCard(it)));
-}
-
-/* open popup from card */
-function openWeaponPopupFromCard(item){
-  const name = item.name;
-  const rarity = item.rarity || 'common';
-  const isDrug = activeTab === 'drugs';
-  const stats = isDrug ? DRUG_PRICES[name] : WEAPON_STATS[name] || {};
-  openWeaponPopup(name, rarity, stats, item.img || FALLBACK, isDrug);
-}
-
-/* open popup generic */
-function openWeaponPopup(name, rarity, stats, img, isDrug = false){
-  weaponPopupName.textContent = name;
-  weaponPopupRarity.textContent = (rarity||'common').toUpperCase();
-  weaponPopupImage.src = img || FALLBACK;
-  
-  if(isDrug) {
-    // Show price for drugs
-    const statsGrid = document.querySelector('.weapon-stats-grid');
-    statsGrid.innerHTML = `
-      <div class="stat-card" style="grid-column: 1 / -1;">
-        <div class="stat-title">Price</div>
-        <div class="stat-value" style="color:var(--accent); font-size:28px;">${stats.price || '-'}</div>
-      </div>
-    `;
-  } else {
-    // Show weapon stats
-    const statsGrid = document.querySelector('.weapon-stats-grid');
-    statsGrid.innerHTML = `
-      <div class="stat-card stat-card-1 stat-card-large">
-        <div class="stat-title">Damage</div>
-        <div class="stat-value">${stats.damage ?? '-'}</div>
-      </div>
-      <div class="stat-card stat-card-2 stat-card-large">
-        <div class="stat-title">Fire Rate</div>
-        <div class="stat-value">${stats.fire ? (stats.fire + ' RPM') : '-'}</div>
-      </div>
-      <div class="stat-card stat-card-3">
-        <div class="stat-title">Ammo</div>
-        <div class="stat-value">${stats.ammo ?? '-'}</div>
-      </div>
-      <div class="stat-card stat-card-4">
-        <div class="stat-title">Magazine</div>
-        <div class="stat-value">${(stats.magStd ? ('Reg: ' + stats.magStd) : '-') + (stats.magExt ? (' | Ext: ' + stats.magExt) : '')}</div>
-      </div>
-    `;
-  }
-  
-  weaponPopup.classList.remove('hidden');
-  weaponPopup.setAttribute('aria-hidden','false');
-}
-function closeWeaponPopup(){
-  weaponPopup.classList.add('hidden');
-  weaponPopup.setAttribute('aria-hidden','true');
-}
-
-/* fallback stats modal close */
-closeStats.addEventListener('click', ()=> { statsModal.classList.remove('open'); statsModal.style.display = 'none'; });
-document.getElementById('statsModal').addEventListener('click', (e)=> { if(e.target.id === 'statsModal'){ statsModal.classList.remove('open'); statsModal.style.display = 'none'; } });
-
-/* topnav click handler (robust) */
-document.querySelectorAll('.topnav .cat').forEach(el=>{
-  el.addEventListener('click', ()=> {
-    document.querySelectorAll('.topnav .cat').forEach(x=> x.classList.remove('active'));
-    el.classList.add('active');
-    activeTab = el.dataset.tab;
-    renderSubtabs(activeTab);
-    renderGrid();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-});
-
-/* filter */
-filterSelect.addEventListener('change', ()=> renderGrid());
-
-/* music toggle */
-function setMusicOn(on){
-  localStorage.setItem('qc_music_on', on ? '1':'0');
-  if(on){ musicToggle.classList.add('on'); musicLabel.textContent = 'Music: On'; musicToggle.querySelector('i').className='fa-solid fa-volume-high'; bgm.play().catch(()=>{}); }
-  else { musicToggle.classList.remove('on'); musicLabel.textContent = 'Music: Off'; musicToggle.querySelector('i').className='fa-solid fa-volume-xmark'; bgm.pause(); }
-}
-musicToggle.addEventListener('click', ()=> {
-  const current = localStorage.getItem('qc_music_on') === '1';
-  setMusicOn(!current);
-});
-function enableBGM(){ function start(){ if(bgm){ bgm.play().catch(()=>{}); } document.removeEventListener('click', start); document.removeEventListener('touchstart', start); } document.addEventListener('click', start); document.addEventListener('touchstart', start); }
-enableBGM();
-setTimeout(()=> { const mp = localStorage.getItem('qc_music_on'); setMusicOn(mp !== '0'); }, 100);
-
-/* spinner modal logic: 1 second spin with easing */
-function renderSpinStrip(){
-  spinStrip.innerHTML = '';
-  const pool = (ITEMS[activeTab]||[]).slice();
-  if(pool.length === 0){ spinStrip.innerHTML = '<div style="color:var(--muted)">No items in this category.</div>'; return; }
-  const fragment = document.createDocumentFragment();
-  for(let i=0;i<15;i++){
-    const it = rand(pool);
-    const tile = document.createElement('div');
-    tile.className = 'spin-tile';
-    tile.style.cssText = 'min-width:140px;height:120px;border-radius:10px;overflow:hidden;background:linear-gradient(180deg,rgba(0,0,0,.16),rgba(255,255,255,0));border:1px solid rgba(255,255,255,.04);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;contain:layout style paint;';
-    tile.innerHTML = `<div style="font-weight:900;color:var(--muted);margin-bottom:6px;">${it.name}</div><img src="${it.img}" style="max-width:100%;max-height:64px;object-fit:contain" loading="eager" onerror="this.src='${FALLBACK}'">`;
-    fragment.appendChild(tile);
-  }
-  spinStrip.appendChild(fragment);
-}
-
-function computeDelays(durationMs, steps){
-  // produce delays (ms) per step using easing (i/n)^2 weights and normalize to duration
-  const weights = [];
-  let sum = 0;
-  for(let i=1;i<=steps;i++){
-    const w = Math.pow(i/steps, 2); // quadratic easing (accelerating weight -> decelerating delays)
-    weights.push(w); sum += w;
-  }
-  return weights.map(w => (w / sum) * durationMs);
-}
-
-spinStartBtn.addEventListener('click', async ()=>{
-  if(spinning) return;
-  spinning = true;
-  playSFX('spin');
-  landedGunDisplay.style.display = 'none';
-  
-  // Determine how many items to drop based on tier
-  let itemCount = 2; // Default for testdrops
-  if(activeTab === 'drugs') itemCount = 2;
-  
-  const pickedItems = [];
-  
-  // Spin for each item individually
-  for(let spinIndex = 0; spinIndex < itemCount; spinIndex++) {
-    // Hide landed gun display before spinning
-    landedGunDisplay.style.display = 'none';
-    
-    // Pick the item for this spin
-    const item = pickWeightedItem(activeTab);
-    pickedItems.push(item);
-    addAcquired(item);
-    
-    // Render new spin strip
-    renderSpinStrip();
-    
-    const steps = 15;
-    const duration = 1000; // 1 second per spin
-    const delays = computeDelays(duration, steps);
-    
-    // Animate the wheel
-    for (let i = 0; i < steps; i++){
-      const first = spinStrip.firstElementChild;
-      if(first) spinStrip.appendChild(first);
-      await tick(delays[i]);
-    }
-    
-    // Show what gun was landed on
-    landedGunImage.src = item.img || FALLBACK;
-    landedGunName.textContent = item.name;
-    landedGunRarity.textContent = (item.rarity || 'common').toUpperCase();
-    landedGunRarity.style.color = getRarityColor(item.rarity);
-    landedGunDisplay.style.display = 'block';
-    
-    // Pause to show the landed gun (800ms) before next spin
-    if(spinIndex < itemCount - 1) {
-      await tick(800);
-    } else {
-      await tick(500);
-    }
-  }
-  
-  // After all spins complete, show all items won
-  sendWebhook({ action:'spin', tier:activeTab, result:`${itemCount} items`, ts:new Date().toISOString() });
-  playSFX('win');
-  closeSpinModal();
-  spinning = false;
-  showVictoryFrame(pickedItems);
-});
-
-function getRarityColor(rarity) {
-  const colors = {
-    common: '#8b7355',
-    uncommon: '#4caf50',
-    rare: '#2196f3',
-    epic: '#9c27b0',
-    legendary: '#ff9800'
-  };
-  return colors[rarity] || colors.common;
-}
-
-function openSpinModal(){ spinModal.classList.add('open'); spinModal.style.display='flex'; renderSpinStrip(); }
-function closeSpinModal(){ spinModal.classList.remove('open'); spinModal.style.display='none'; }
-dropBtn.addEventListener('click', openSpinModal);
-closeSpin.addEventListener('click', closeSpinModal);
-
-/* Victory Frame Functions */
-function showVictoryFrame(items) {
-  const victoryFrame = document.getElementById('victoryFrame');
-  const victoryItemsGrid = document.getElementById('victoryItemsGrid');
-  const victoryCount = document.getElementById('victoryCount');
-  const victoryHeaderText = document.getElementById('victoryHeaderText');
-  
-  // Update header
-  victoryHeaderText.textContent = 'YOU GOT:';
-  victoryCount.textContent = `${items.length} ITEM${items.length > 1 ? 'S' : ''}`;
-  
-  // Clear existing items
-  victoryItemsGrid.innerHTML = '';
-  
-  // Use document fragment for better performance
-  const fragment = document.createDocumentFragment();
-  items.forEach((item, index) => {
-    const itemEl = document.createElement('div');
-    itemEl.className = 'victory-item';
-    itemEl.innerHTML = `
-      <div class="victory-image-container">
-        <img src="${item.img || FALLBACK}" alt="${item.name}" loading="eager" onerror="this.src='${FALLBACK}'">
-      </div>
-      <div class="victory-item-name">${item.name}</div>
-      <div class="victory-item-rarity ${item.rarity.toLowerCase()}">${item.rarity.toUpperCase()}</div>
-    `;
-    fragment.appendChild(itemEl);
-  });
-  victoryItemsGrid.appendChild(fragment);
-  
-  // Adjust grid columns based on item count
-  if(items.length === 2) {
-    victoryItemsGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-  } else if(items.length === 4) {
-    victoryItemsGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-  } else if(items.length === 6) {
-    victoryItemsGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
-  }
-  
-  requestAnimationFrame(() => {
-    victoryFrame.style.display = 'flex';
-  });
-  playSFX('win');
-}
-
-function closeVictoryFrame() {
-  const victoryFrame = document.getElementById('victoryFrame');
-  victoryFrame.style.display = 'none';
-}
-
-document.getElementById('victoryCollectBtn').addEventListener('click', closeVictoryFrame);
-document.getElementById('victoryFrame').addEventListener('click', (e) => {
-  if (e.target.id === 'victoryFrame') closeVictoryFrame();
-});
-
-/* weighting picker */
-function pickRarity(weights){
-  const entries = Object.entries(weights).filter(([k,v])=> Number(v) > 0);
-  const total = entries.reduce((s,[_k,v])=> s + Number(v), 0);
-  const r = Math.random() * total; let acc = 0;
-  for(const [k,v] of entries){ acc += Number(v); if(r <= acc) return k; }
-  return entries[entries.length-1][0];
-}
-function pickWeightedItem(tabKey){
-  const w = getWeights();
-  const weights = w[tabKey] || DEFAULT_WEIGHTS[tabKey] || DEFAULT_WEIGHTS.tier1;
-  const rarity = pickRarity(weights);
-  const pool = (ITEMS[tabKey]||[]).filter(i=> i.rarity === rarity);
-  if(pool.length) return rand(pool);
-  // If no items of that rarity exist in this tab, pick from any rarity in THIS tab only
-  const tabItems = ITEMS[tabKey] || [];
-  if(tabItems.length) return rand(tabItems);
-  // Ultimate fallback: tier1 items
-  return rand(ITEMS.tier1 || [{ name:'Fallback', rarity:'common', category:'Unknown', img:FALLBACK }]);
-}
-
-/* acquired */
-function addAcquired(item){
-  acquired.unshift(item);
-  const card = document.createElement('div');
-  card.className = 'drop-card';
-  card.style.display='flex'; card.style.gap='10px'; card.style.alignItems='center'; card.style.padding='8px'; card.style.borderRadius='10px';
-  card.style.border='1px solid rgba(255,255,255,.04)'; card.style.background='linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,0))';
-  card.innerHTML = `<img src="${item.img}" style="width:56px;height:56px;object-fit:contain;border-radius:8px;" onerror="this.src='${FALLBACK}'"><div><div style="font-weight:900">${item.name}</div><div style="color:var(--muted);font-size:12px">${(item.rarity||'common').toUpperCase()}</div></div>`;
-  card.addEventListener('click', ()=> openWeaponPopupFromCard(item));
-  acquiredGrid.prepend(card);
-  while(acquiredGrid.children.length > 120) acquiredGrid.removeChild(acquiredGrid.lastChild);
-}
-
-/* SFX */
-const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext||window.webkitAudioContext)() : null;
-function playTone(freq,len=0.08,type='sine',gain=0.06){
-  if(!audioCtx) return;
-  try{ const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type=type; o.frequency.value=freq; o.connect(g); g.connect(audioCtx.destination); const now = audioCtx.currentTime; g.gain.value=0; g.gain.linearRampToValueAtTime(gain, now+0.01); o.start(now); g.gain.exponentialRampToValueAtTime(0.0001, now+len); o.stop(now+len+0.02); }catch(e){}
-}
-function playSFX(name){
-  if(!audioCtx) return;
-  if(audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
-  if(name === 'click') playTone(880,0.06,'square',0.05);
-  if(name === 'spin') playTone(240,0.12,'sawtooth',0.12);
-  if(name === 'win'){ playTone(880,0.08,'sine',0.12); setTimeout(()=>playTone(1320,0.12,'sine',0.11),120); setTimeout(()=>playTone(1760,0.16,'sine',0.09),260); }
-}
-
-/* webhooks */
-function sendWebhook(payload){
-  const cfg = loadCfg();
-  const webhook = cfg.webhook || '';
-  if(!webhook) return;
-  fetch(webhook, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ content: `Quaker | ${payload.action} → ${payload.result||''} (${payload.rarity||''}) — ${payload.ts||''}` }) })
-    .catch(e=> console.warn('webhook fail', e));
-}
-
-/* User profile modal */
-async function showUserProfileModal(user) {
-  const threads = await getThreadsFromDB();
-  const userThreads = threads.filter(t => t.author === user.username);
-  const joinDate = new Date().toLocaleDateString(); // Could store actual join date in user object
-  
-  const modal = document.createElement('div');
-  modal.className = 'modal-overlay open';
-  modal.style.display = 'flex';
-  modal.innerHTML = `
-    <div class="modal" style="max-width:600px; background:rgba(70,70,70,.95);">
-      <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:24px;">
-        <div>
-          <h3 style="color:var(--accent); font-weight:900; font-size:28px; margin:0 0 8px 0;">
-            <i class="fa-solid fa-user-circle"></i> ${user.username}
-          </h3>
-          <div style="color:var(--muted); font-size:14px;">Member since ${joinDate}</div>
-        </div>
-        <button class="btn" id="closeProfileModal"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div style="background:linear-gradient(180deg,rgba(220,20,60,.1),rgba(0,71,171,.05)); border:2px solid var(--glass-border); border-radius:12px; padding:24px; margin-bottom:20px;">
-        <h4 style="color:var(--accent); font-weight:800; font-size:18px; margin:0 0 16px 0;">
-          <i class="fa-solid fa-chart-simple"></i> Statistics
-        </h4>
-        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:16px;">
-          <div style="background:rgba(0,0,0,.4); padding:16px; border-radius:8px; text-align:center;">
-            <div style="color:var(--muted); font-size:13px; margin-bottom:4px;">Total Threads</div>
-            <div style="color:var(--accent); font-size:28px; font-weight:900;">${userThreads.length}</div>
-          </div>
-          <div style="background:rgba(0,0,0,.4); padding:16px; border-radius:8px; text-align:center;">
-            <div style="color:var(--muted); font-size:13px; margin-bottom:4px;">Username</div>
-            <div style="color:var(--text); font-size:20px; font-weight:700;">${user.username}</div>
-          </div>
-        </div>
-      </div>
-
-      <div style="background:rgba(0,0,0,.3); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:20px;">
-        <h4 style="color:var(--accent); font-weight:800; font-size:18px; margin:0 0 12px 0;">
-          <i class="fa-solid fa-list"></i> Recent Threads
-        </h4>
-        ${userThreads.length === 0 ? `
-          <div style="color:var(--muted); text-align:center; padding:20px;">
-            <i class="fa-solid fa-inbox" style="font-size:32px; display:block; margin-bottom:8px; opacity:0.5;"></i>
-            No threads posted yet
-          </div>
-        ` : userThreads.slice(0, 5).map(thread => `
-          <div style="padding:12px; background:rgba(255,255,255,.02); border-radius:8px; margin-bottom:8px; border-left:3px solid var(--accent);">
-            <div style="font-weight:700; color:var(--text); margin-bottom:4px;">${thread.title}</div>
-            <div style="font-size:12px; color:var(--muted);">
-              <span style="background:rgba(220,20,60,.2); color:var(--accent); padding:2px 8px; border-radius:4px; margin-right:6px;">${thread.schemeType}</span>
-              ${new Date(thread.date).toLocaleDateString()}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-
-      <div style="display:flex; gap:12px; justify-content:flex-end;">
-        <button class="btn" id="profileLogout" style="background:rgba(220,20,60,.2); border-color:var(--accent);">
-          <i class="fa-solid fa-right-from-bracket"></i>&nbsp;Logout
-        </button>
-        <button class="btn drop" id="closeProfileBtn">Close</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-
-  document.getElementById('closeProfileModal').addEventListener('click', () => modal.remove());
-  document.getElementById('closeProfileBtn').addEventListener('click', () => modal.remove());
-  document.getElementById('profileLogout').addEventListener('click', () => {
-    localStorage.removeItem('forum_current_user');
-    updateUserProfile();
-    modal.remove();
-    if(activeTab === 'forums') renderGrid();
-  });
-  modal.addEventListener('click', (e) => {
-    if(e.target === modal) modal.remove();
-  });
-}
-
-/* startup */
-function init(){
-  renderSubtabs(activeTab);
-  renderGrid();
-  updateUserProfile();
-  const cfg = loadCfg();
-  document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleString();
-  // music pref
-  const mp = localStorage.getItem('qc_music_on');
-  setTimeout(()=> setMusicOn(mp !== '0'), 60);
-  // allow audio context resume on first interaction
-  document.addEventListener('click', ()=> { if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}); }, { passive: true });
-  console.log('TFB Illegal Civ system ready');
-}
-
-/* Forum modal functions */
-function showNewThreadModal(username) {
-  const modal = document.createElement('div');
-  modal.className = 'modal-overlay open';
-  modal.style.display = 'flex';
-  modal.innerHTML = `
-    <div class="modal" style="max-width:700px; background:rgba(70,70,70,.95);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h3 style="color:var(--accent); font-weight:900; font-size:24px; margin:0;">
-          <i class="fa-solid fa-plus"></i> Create New Thread
-        </h3>
-        <button class="btn" id="closeThreadModal"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      
-      <div style="margin-bottom:16px;">
-        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Thread Title *</label>
-        <input type="text" id="threadTitle" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit;" placeholder="Be specific and creative">
-      </div>
-
-      <div style="margin-bottom:16px;">
-        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Scheme Type *</label>
-        <select id="schemeType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit; font-weight:700;">
-          <option value="">-- Select --</option>
-          <option value="Scammer">Scammer</option>
-          <option value="Racer">Racer</option>
-          <option value="Drug Dealer">Drug Dealer</option>
-        </select>
-      </div>
-
-      <div style="margin-bottom:16px;">
-        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Thread Type *</label>
-        <select id="threadType" style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit; font-weight:700;">
-          <option value="">-- Select --</option>
-          <option value="Individual (I)">Individual (I)</option>
-          <option value="Group (G)">Group (G)</option>
-        </select>
-      </div>
-
-      <div style="margin-bottom:20px;">
-        <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px;">Video (Optional)</label>
-        <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-bottom:8px;">
-          <div style="color:var(--muted); font-size:13px; margin-bottom:8px; font-weight:600;">Option 1: Upload Video File</div>
-          <input type="file" id="videoUpload" accept="video/*" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit;">
-          <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 100MB (supports 1-minute videos)</div>
-        </div>
-        <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:8px; padding:12px;">
-          <div style="color:var(--muted); font-size:13px; margin-bottom:8px; font-weight:600;">Option 2: Video URL</div>
-          <input type="text" id="videoUrl" placeholder="https://example.com/video.mp4 or YouTube/Streamable link" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit;">
-          <div style="color:var(--muted); font-size:11px; margin-top:4px;"><i class="fa-solid fa-link"></i> Paste direct video link or embed URL</div>
-        </div>
-      </div>
-
-      <div id="threadError" style="color:#ff4444; margin-bottom:12px; display:none; padding:12px; background:rgba(255,0,0,.1); border-radius:8px; border:1px solid #ff4444;"></div>
-
-      <div style="display:flex; gap:12px; justify-content:flex-end;">
-        <button class="btn" id="cancelThread">Cancel</button>
-        <button class="btn drop" id="submitThread"><i class="fa-solid fa-paper-plane"></i>&nbsp;Submit Thread</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-
-  document.getElementById('closeThreadModal').addEventListener('click', () => modal.remove());
-  document.getElementById('cancelThread').addEventListener('click', () => modal.remove());
-  
-  document.getElementById('submitThread').addEventListener('click', async () => {
-    const title = document.getElementById('threadTitle').value.trim();
-    const schemeType = document.getElementById('schemeType').value;
-    const threadType = document.getElementById('threadType').value;
-    const videoFile = document.getElementById('videoUpload').files[0];
-    const errorDiv = document.getElementById('threadError');
-    const submitBtn = document.getElementById('submitThread');
-
-    if(!title || !schemeType || !threadType) {
-      errorDiv.textContent = 'Please fill all required fields';
-      errorDiv.style.display = 'block';
-      return;
-    }
-
-    let videoUrl = null;
-    let videoType = null;
-    const videoUrlInput = document.getElementById('videoUrl').value.trim();
-    
-    // Check if URL is provided
-    if(videoUrlInput && videoFile) {
-      errorDiv.textContent = 'Please choose either file upload OR URL, not both';
-      errorDiv.style.display = 'block';
-      return;
-    }
-    
-    if(videoUrlInput) {
-      // Use provided URL
-      videoUrl = videoUrlInput;
-      videoType = 'url';
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
-    } else if(videoFile) {
-      // Upload file
-      if(videoFile.size > 100 * 1024 * 1024) {
-        errorDiv.textContent = 'Video file too large (max 100MB for 1-minute videos)';
-        errorDiv.style.display = 'block';
-        return;
-      }
-      
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Uploading...';
-      errorDiv.style.display = 'none';
-      
-      try {
-        videoUrl = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            if(e.target && e.target.result) {
-              resolve(e.target.result);
-            } else {
-              reject(new Error('Failed to read file'));
-            }
-          };
-          reader.onerror = () => reject(new Error('File read error'));
-          reader.readAsDataURL(videoFile);
-        });
-        videoType = videoFile.type;
-      } catch(e) {
-        console.error('Video upload error:', e);
-        errorDiv.textContent = 'Failed to upload video: ' + (e.message || 'Unknown error');
-        errorDiv.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Submit Thread';
-        return;
-      }
-    } else {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
-    }
-
-    try {
-      const threadId = 'thread_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      
-      const thread = {
-        id: threadId,
-        title,
-        schemeType,
-        threadType,
-        author: username,
-        date: new Date().toISOString(),
-        videoUrl,
-        videoType,
-        comments: []
-      };
-
-      await saveThreadToDB(thread);
-      
-      modal.remove();
-      renderGrid(true);
-    } catch(e) {
-      console.error('Thread creation error:', e);
-      errorDiv.textContent = 'Failed to create thread. Please try again.';
-      errorDiv.style.display = 'block';
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Submit Thread';
-    }
-  });
-
-  modal.addEventListener('click', (e) => {
-    if(e.target === modal) modal.remove();
-  });
-}
-
-async function showThreadModal(thread) {
-  const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
-  const comments = thread.comments || [];
-  const videoTypeAttr = thread.videoType ? `type="${thread.videoType}"` : 'type="video/mp4"';
-  
-  const modal = document.createElement('div');
-  modal.className = 'modal-overlay open';
-  modal.style.display = 'flex';
-  modal.innerHTML = `
-    <div class="modal" style="max-width:1000px; max-height:90vh; overflow-y:auto; background:rgba(70,70,70,.95);">
-      <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:20px;">
-        <div style="flex:1;">
-          <h3 style="color:var(--accent); font-weight:900; font-size:28px; margin:0 0 12px 0;">${thread.title}</h3>
-          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
-            <span style="background:rgba(220,20,60,.2); color:var(--accent); padding:6px 14px; border-radius:6px; font-size:13px; font-weight:700;">
-              <i class="fa-solid fa-tag"></i> ${thread.schemeType}
-            </span>
-            <span style="background:rgba(0,71,171,.2); color:#4a9eff; padding:6px 14px; border-radius:6px; font-size:13px; font-weight:700;">
-              <i class="fa-solid fa-users"></i> ${thread.threadType}
-            </span>
-          </div>
-          <div style="color:var(--muted); font-size:14px;">
-            Posted by <strong style="color:var(--accent);">${thread.author}</strong> on ${new Date(thread.date).toLocaleDateString()}
-          </div>
-        </div>
-        <div style="display:flex; gap:8px;">
-          ${currentUser && currentUser.username === thread.author ? `
-            <button class="btn" id="deleteThread" style="background:rgba(220,20,60,.3); border:1px solid var(--accent);" title="Delete Thread">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          ` : ''}
-          <button class="btn" id="closeViewThread"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      </div>
-
-      ${thread.videoUrl ? `
-        <div style="background:rgba(80,80,80,.7); border:2px solid var(--accent); border-radius:12px; padding:16px; margin-bottom:20px;">
-          <div style="color:var(--accent); font-weight:700; margin-bottom:12px; font-size:16px;">
-            <i class="fa-solid fa-video"></i> Thread Video
-          </div>
-          ${thread.videoType === 'url' ? `
-            <div style="background:rgba(70,70,70,.6); padding:12px; border-radius:8px; margin-bottom:8px;">
-              <a href="${thread.videoUrl}" target="_blank" style="color:var(--accent); text-decoration:none; word-break:break-all;">
-                <i class="fa-solid fa-external-link-alt"></i> ${thread.videoUrl}
-              </a>
-            </div>
-            ${thread.videoUrl.includes('youtube.com') || thread.videoUrl.includes('youtu.be') ? `
-              <iframe width="100%" height="400" src="${thread.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:8px;"></iframe>
-            ` : thread.videoUrl.includes('streamable.com') ? `
-              <iframe src="${thread.videoUrl.replace('streamable.com/', 'streamable.com/e/')}" width="100%" height="400" frameborder="0" allowfullscreen style="border-radius:8px;"></iframe>
-            ` : `
-              <video controls style="width:100%; max-height:500px; border-radius:8px; background:#000;">
-                <source src="${thread.videoUrl}">
-                Your browser does not support video playback.
-              </video>
-            `}
-          ` : `
-            <video controls style="width:100%; max-height:500px; border-radius:8px; background:#000;">
-              <source src="${thread.videoUrl}" ${videoTypeAttr}>
-              Your browser does not support video playback.
-            </video>
-          `}
-        </div>
-      ` : `
-        <div style="background:rgba(80,80,80,.5); border:1px solid var(--glass-border); border-radius:12px; padding:24px; text-align:center; color:var(--muted); margin-bottom:20px;">
-          <i class="fa-solid fa-video-slash" style="font-size:32px; margin-bottom:12px; display:block; opacity:0.5;"></i>
-          <div>No video attached to this thread</div>
-        </div>
-      `}
-
-      <!-- Comments Section -->
-      <div style="background:rgba(90,90,90,.5); border:1px solid var(--glass-border); border-radius:12px; padding:20px; margin-bottom:20px;">
-        <h4 style="color:var(--accent); font-weight:800; font-size:20px; margin:0 0 16px 0;">
-          <i class="fa-solid fa-comments"></i> Discussion (${comments.length})
-        </h4>
-
-        ${currentUser ? `
-          <div style="background:rgba(100,100,100,.3); border:1px solid var(--glass-border); border-radius:8px; padding:16px; margin-bottom:20px;">
-            <textarea id="newComment" placeholder="Add your comment..." style="width:100%; min-height:80px; padding:12px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(60,60,60,.6); color:var(--text); font-family:inherit; resize:vertical; margin-bottom:12px;"></textarea>
-            <div style="margin-bottom:12px;">
-              <label style="color:var(--muted); font-weight:700; display:block; margin-bottom:8px; font-size:14px;">Attach Video (Optional)</label>
-              <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:6px; padding:10px; margin-bottom:6px;">
-                <div style="color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:600;">Upload File:</div>
-                <input type="file" id="commentVideo" accept="video/*" style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit; font-size:12px;">
-                <div style="color:var(--muted); font-size:10px; margin-top:4px;"><i class="fa-solid fa-info-circle"></i> Max 50MB</div>
-              </div>
-              <div style="background:rgba(80,80,80,.4); border:1px solid var(--glass-border); border-radius:6px; padding:10px;">
-                <div style="color:var(--muted); font-size:12px; margin-bottom:6px; font-weight:600;">Or paste URL:</div>
-                <input type="text" id="commentVideoUrl" placeholder="https://..." style="width:100%; padding:6px; border-radius:4px; border:1px solid var(--glass-border); background:rgba(60,60,60,.5); color:var(--text); font-family:inherit; font-size:12px;">
-              </div>
-            </div>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-              <button class="btn" id="clearComment"><i class="fa-solid fa-eraser"></i>&nbsp;Clear</button>
-              <button class="btn drop" id="postComment"><i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment</button>
-            </div>
-          </div>
-        ` : `
-          <div style="background:rgba(220,20,60,.1); border:1px solid var(--accent); border-radius:8px; padding:16px; text-align:center; color:var(--muted); margin-bottom:20px;">
-            <i class="fa-solid fa-lock" style="margin-right:8px;"></i>
-            Please login to join the discussion
-          </div>
-        `}
-
-        <div id="commentsList">
-          ${comments.length === 0 ? `
-            <div style="text-align:center; padding:40px; color:var(--muted);">
-              <i class="fa-solid fa-comment-slash" style="font-size:36px; display:block; margin-bottom:12px; opacity:0.5;"></i>
-              <div>No comments yet. Be the first to comment!</div>
-            </div>
-          ` : comments.map((comment, idx) => {
-            const commentVideoType = comment.videoType ? `type="${comment.videoType}"` : 'type="video/mp4"';
-            return `
-            <div class="comment-item" data-idx="${idx}" style="background:rgba(110,110,110,.5); border-left:3px solid var(--accent); border-radius:8px; padding:16px; margin-bottom:12px;">
-              <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:12px;">
-                <div>
-                  <strong style="color:var(--accent); font-size:15px;">${comment.author}</strong>
-                  <span style="color:var(--muted); font-size:13px; margin-left:12px;">${new Date(comment.date).toLocaleString()}</span>
-                  ${comment.edited ? '<span style="color:var(--muted); font-size:12px; margin-left:8px; font-style:italic;">(edited)</span>' : ''}
-                </div>
-                ${currentUser && currentUser.username === comment.author ? `
-                  <div style="display:flex; gap:8px;">
-                    <button class="btn" style="padding:6px 12px; font-size:12px;" onclick="editComment('${thread.id}', ${idx})"><i class="fa-solid fa-edit"></i> Edit</button>
-                    <button class="btn" style="padding:6px 12px; font-size:12px; background:rgba(220,20,60,.2);" onclick="deleteComment('${thread.id}', ${idx})"><i class="fa-solid fa-trash"></i> Delete</button>
-                  </div>
-                ` : ''}
-              </div>
-              <div class="comment-text" style="color:var(--text); line-height:1.6; white-space:pre-wrap; margin-bottom:${comment.videoUrl ? '12px' : '0'};">${comment.text}</div>
-              ${comment.videoUrl ? `
-                <div style="background:rgba(90,90,90,.6); border:1px solid var(--glass-border); border-radius:8px; padding:12px; margin-top:12px;">
-                  <div style="color:var(--muted); font-size:12px; margin-bottom:8px;"><i class="fa-solid fa-video"></i> Attached Video</div>
-                  ${comment.videoType === 'url' ? `
-                    <div style="background:rgba(80,80,80,.6); padding:8px; border-radius:6px; margin-bottom:8px;">
-                      <a href="${comment.videoUrl}" target="_blank" style="color:var(--accent); text-decoration:none; word-break:break-all; font-size:12px;">
-                        <i class="fa-solid fa-external-link-alt"></i> ${comment.videoUrl}
-                      </a>
+                
+                <div class="header-right">
+                    <div class="logo-container">
+                        <img src="https://media.discordapp.net/attachments/1295535835822690395/1448475089158013118/behindbar.png?ex=693b650c&is=693a138c&hm=5c2bf4de45a24fa76704b342a96e5029387426b56f0228ce1515a1afc0e7cc28&=&format=webp&quality=lossless&width=830&height=621" alt="Behind Bars Logo" class="main-logo">
                     </div>
-                    ${comment.videoUrl.includes('youtube.com') || comment.videoUrl.includes('youtu.be') ? `
-                      <iframe width="100%" height="250" src="${comment.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:6px;"></iframe>
-                    ` : comment.videoUrl.includes('streamable.com') ? `
-                      <iframe src="${comment.videoUrl.replace('streamable.com/', 'streamable.com/e/')}" width="100%" height="250" frameborder="0" allowfullscreen style="border-radius:6px;"></iframe>
-                    ` : `
-                      <video controls style="width:100%; max-height:300px; border-radius:6px; background:#000;">
-                        <source src="${comment.videoUrl}">
-                        Your browser does not support video playback.
-                      </video>
-                    `}
-                  ` : `
-                    <video controls style="width:100%; max-height:300px; border-radius:6px; background:#000;">
-                      <source src="${comment.videoUrl}" ${commentVideoType}>
-                      Your browser does not support video playback.
-                    </video>
-                  `}
                 </div>
-              ` : ''}
+            </header>
+            
+            <!-- Content Sections -->
+            <div class="content-area">
+                
+                <!-- HOME SECTION -->
+                <section id="home-section" class="content-section active">
+                    <div class="hero-section">
+                        <h2 class="section-title">Welcome to Behind Bars</h2>
+                        <p class="section-intro">Your premier destination for high-quality bicycles, expert service, and a vibrant cycling community.</p>
+                        
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-bicycle"></i>
+                                </div>
+                                <h3>Premium Bikes</h3>
+                                <p>Top brands and models for every rider</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-wrench"></i>
+                                </div>
+                                <h3>Expert Service</h3>
+                                <p>Professional maintenance and repairs</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3>Community</h3>
+                                <p>Join our passionate cycling community</p>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <h3>Events & Rides</h3>
+                                <p>Group rides and cycling events</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- SHOP SECTION -->
+                <section id="shop-section" class="content-section">
+                    <h2 class="section-title">Our Bikes</h2>
+                    
+                    <!-- Bike Categories -->
+                    <div class="subtabs">
+                        <button class="sub active" data-shop="all">All Bikes</button>
+                        <button class="sub" data-shop="road">Road Bikes</button>
+                        <button class="sub" data-shop="mountain">Mountain Bikes</button>
+                        <button class="sub" data-shop="hybrid">Hybrid</button>
+                        <button class="sub" data-shop="electric">E-Bikes</button>
+                        <button class="sub" data-shop="accessories">Accessories</button>
+                    </div>
+                    
+                    <div class="products-grid" id="products-grid">
+                        <!-- Products will be populated by JavaScript -->
+                    </div>
+                </section>
+                
+                <!-- SERVICES SECTION -->
+                <section id="services-section" class="content-section">
+                    <h2 class="section-title">Our Services</h2>
+                    
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-header">
+                                <i class="fas fa-tools"></i>
+                                <h3>Basic Tune-Up</h3>
+                            </div>
+                            <p class="service-description">Complete bike inspection, brake and gear adjustment, chain lubrication</p>
+                            <div class="service-price">From $75</div>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-header">
+                                <i class="fas fa-cog"></i>
+                                <h3>Full Overhaul</h3>
+                            </div>
+                            <p class="service-description">Complete disassembly, cleaning, and rebuild with new parts as needed</p>
+                            <div class="service-price">From $250</div>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-header">
+                                <i class="fas fa-wheel"></i>
+                                <h3>Wheel Building</h3>
+                            </div>
+                            <p class="service-description">Custom wheel builds with your choice of hubs, rims, and spokes</p>
+                            <div class="service-price">From $150/wheel</div>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-header">
+                                <i class="fas fa-paint-brush"></i>
+                                <h3>Custom Paint</h3>
+                            </div>
+                            <p class="service-description">Professional custom paint jobs and frame restoration</p>
+                            <div class="service-price">Quote Required</div>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-header">
+                                <i class="fas fa-bicycle"></i>
+                                <h3>Bike Fitting</h3>
+                            </div>
+                            <p class="service-description">Professional bike fitting for optimal comfort and performance</p>
+                            <div class="service-price">$125</div>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-header">
+                                <i class="fas fa-clock"></i>
+                                <h3>Same-Day Repairs</h3>
+                            </div>
+                            <p class="service-description">Quick turnaround for urgent repairs and basic services</p>
+                            <div class="service-price">Varies</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- FORUM SECTION -->
+                <section id="forum-section" class="content-section">
+                    <h2 class="section-title">Community Forum</h2>
+                    
+                    <!-- Forum Categories -->
+                    <div class="subtabs">
+                        <button class="sub active" data-forum="all">All Topics</button>
+                        <button class="sub" data-forum="general">General Discussion</button>
+                        <button class="sub" data-forum="maintenance">Maintenance Tips</button>
+                        <button class="sub" data-forum="routes">Routes & Rides</button>
+                        <button class="sub" data-forum="marketplace">Marketplace</button>
+                    </div>
+                    
+                    <div class="forum-posts" id="forum-posts">
+                        <!-- Forum posts will be populated by JavaScript -->
+                    </div>
+                    
+                    <button class="btn-primary" id="new-post-btn">
+                        <i class="fas fa-plus"></i> New Topic
+                    </button>
+                </section>
+                
+                <!-- ABOUT SECTION -->
+                <section id="about-section" class="content-section">
+                    <h2 class="section-title">About Behind Bars</h2>
+                    
+                    <div class="about-content">
+                        <div class="about-text">
+                            <h3>Our Story</h3>
+                            <p>Behind Bars has been serving the cycling community with passion and expertise. We're more than just a bike shop – we're a community of riders dedicated to sharing the joy of cycling.</p>
+                            
+                            <h3>Our Mission</h3>
+                            <p>To provide exceptional bicycles, expert service, and foster a welcoming community where cyclists of all levels can connect, learn, and share their passion for riding.</p>
+                            
+                            <h3>Why Choose Us?</h3>
+                            <ul class="about-list">
+                                <li><i class="fas fa-check"></i> Expert staff with decades of combined experience</li>
+                                <li><i class="fas fa-check"></i> Curated selection of premium bikes and accessories</li>
+                                <li><i class="fas fa-check"></i> Professional service and custom builds</li>
+                                <li><i class="fas fa-check"></i> Active community events and group rides</li>
+                                <li><i class="fas fa-check"></i> Customer satisfaction guaranteed</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="about-stats">
+                            <div class="stat-card">
+                                <div class="stat-number">15+</div>
+                                <div class="stat-label">Years in Business</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">5000+</div>
+                                <div class="stat-label">Happy Customers</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">100+</div>
+                                <div class="stat-label">Weekly Group Rides</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">Online Support</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- CONTACT SECTION -->
+                <section id="contact-section" class="content-section">
+                    <h2 class="section-title">Get In Touch</h2>
+                    
+                    <div class="contact-grid">
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <h4>Location</h4>
+                                    <p>123 Bike Street<br>Your City, ST 12345</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <h4>Phone</h4>
+                                    <p>(555) 123-4567</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h4>Email</h4>
+                                    <p>info@behindbars.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Hours</h4>
+                                    <p>Mon-Fri: 10am-7pm<br>Sat-Sun: 9am-6pm</p>
+                                </div>
+                            </div>
+                            
+                            <div class="social-links">
+                                <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-form">
+                            <form id="contact-form">
+                                <div class="form-group">
+                                    <input type="text" id="name" placeholder="Your Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" id="email" placeholder="Your Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="subject" placeholder="Subject" required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+                                </div>
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+                
             </div>
-          `;
-          }).join('')}
         </div>
-      </div>
-
-      <div style="text-align:right;">
-        <button class="btn" id="closeViewThreadBtn">Close</button>
-      </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Behind Bars - Premium Bicycle Shop. All rights reserved.</p>
+            <p>Ride Safe. Ride Behind Bars.</p>
+        </footer>
     </div>
-  `;
-  document.body.appendChild(modal);
-
-  document.getElementById('closeViewThread').addEventListener('click', () => modal.remove());
-  document.getElementById('closeViewThreadBtn').addEventListener('click', () => modal.remove());
-  
-  // Delete thread button
-  if(currentUser && currentUser.username === thread.author) {
-    const deleteBtn = document.getElementById('deleteThread');
-    if(deleteBtn) {
-      deleteBtn.addEventListener('click', async () => {
-        if(confirm('Are you sure you want to delete this entire thread? This cannot be undone.')) {
-          try {
-            await deleteThreadFromDB(thread.id);
-            modal.remove();
-            // Refresh the forums grid
-            await renderGrid(true);
-            alert('Thread deleted successfully');
-          } catch(e) {
-            console.error('Delete thread error:', e);
-            alert('Failed to delete thread. Please try again.');
-          }
-        }
-      });
-    }
-  }
-  
-  if(currentUser) {
-    document.getElementById('clearComment').addEventListener('click', () => {
-      document.getElementById('newComment').value = '';
-      document.getElementById('commentVideo').value = '';
-      document.getElementById('commentVideoUrl').value = '';
-    });
-
-    document.getElementById('postComment').addEventListener('click', async () => {
-      const commentText = document.getElementById('newComment').value.trim();
-      const videoFile = document.getElementById('commentVideo').files[0];
-      const videoUrlInput = document.getElementById('commentVideoUrl').value.trim();
-      const postBtn = document.getElementById('postComment');
-      
-      if(!commentText && !videoFile && !videoUrlInput) {
-        alert('Please enter a comment or attach a video');
-        return;
-      }
-      
-      if(videoFile && videoUrlInput) {
-        alert('Please choose either file upload OR URL, not both');
-        return;
-      }
-      
-      let videoUrl = null;
-      let videoType = null;
-      
-      if(videoUrlInput) {
-        videoUrl = videoUrlInput;
-        videoType = 'url';
-        postBtn.disabled = true;
-        postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
-      } else if(videoFile) {
-        if(videoFile.size > 50 * 1024 * 1024) {
-          alert('Video file too large (max 50MB for comments)');
-          return;
-        }
-        
-        postBtn.disabled = true;
-        postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Uploading...';
-        
-        try {
-          videoUrl = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              if(e.target && e.target.result) {
-                resolve(e.target.result);
-              } else {
-                reject(new Error('Failed to read file'));
-              }
-            };
-            reader.onerror = () => reject(new Error('File read error'));
-            reader.readAsDataURL(videoFile);
-          });
-          videoType = videoFile.type;
-        } catch(e) {
-          console.error('Video upload error:', e);
-          alert('Failed to upload video: ' + (e.message || 'Unknown error'));
-          postBtn.disabled = false;
-          postBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment';
-          return;
-        }
-      } else {
-        postBtn.disabled = true;
-        postBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>&nbsp;Posting...';
-      }
-      
-      try {
-        const newComment = {
-          author: currentUser.username,
-          text: commentText || '(Video only)',
-          date: new Date().toISOString(),
-          edited: false,
-          videoUrl,
-          videoType
-        };
-        
-        const threads = await getThreadsFromDB();
-        const threadIndex = threads.findIndex(t => t.id === thread.id);
-        if(threadIndex !== -1) {
-          if(!threads[threadIndex].comments) threads[threadIndex].comments = [];
-          threads[threadIndex].comments.push(newComment);
-          await updateThreadInDB(thread.id, { comments: threads[threadIndex].comments });
-          
-          // Refresh thread data from database to ensure we have latest
-          const updatedThreads = await getThreadsFromDB();
-          const updatedThreadIndex = updatedThreads.findIndex(t => t.id === thread.id);
-          
-          modal.remove();
-          if(updatedThreadIndex !== -1) {
-            showThreadModal(updatedThreads[updatedThreadIndex]);
-          }
-        } else {
-          alert('Thread not found. It may have been deleted.');
-          postBtn.disabled = false;
-          postBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment';
-        }
-      } catch(e) {
-        console.error('Comment posting error:', e);
-        alert('Failed to post comment. Please try again.');
-        postBtn.disabled = false;
-        postBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i>&nbsp;Post Comment';
-      }
-    });
-  }
-  
-  modal.addEventListener('click', (e) => {
-    if(e.target === modal) modal.remove();
-  });
-}
-
-async function editComment(threadId, commentIdx) {
-  try {
-    const threads = await getThreadsFromDB();
-    const threadIndex = threads.findIndex(t => t.id === threadId);
-    if(threadIndex === -1 || !threads[threadIndex].comments || !threads[threadIndex].comments[commentIdx]) {
-      alert('Comment not found');
-      return;
-    }
     
-    const comment = threads[threadIndex].comments[commentIdx];
-    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
+    <!-- Modal for New Forum Post -->
+    <div id="post-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Topic</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="new-post-form">
+                <div class="form-group">
+                    <input type="text" id="post-title" placeholder="Topic Title" required>
+                </div>
+                <div class="form-group">
+                    <select id="post-category">
+                        <option value="general">General Discussion</option>
+                        <option value="maintenance">Maintenance Tips</option>
+                        <option value="routes">Routes & Rides</option>
+                        <option value="marketplace">Marketplace</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea id="post-content" rows="6" placeholder="Write your post..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i> Post Topic
+                </button>
+            </form>
+        </div>
+    </div>
     
-    if(!currentUser || currentUser.username !== comment.author) {
-      alert('You can only edit your own comments');
-      return;
-    }
-    
-    const newText = prompt('Edit your comment:', comment.text === '(Video only)' ? '' : comment.text);
-    
-    if(newText !== null && newText.trim()) {
-      comment.text = newText.trim();
-      comment.edited = true;
-      await updateThreadInDB(threadId, { comments: threads[threadIndex].comments });
-      
-      // Refresh modal
-      document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
-      showThreadModal(threads[threadIndex]);
-    }
-  } catch(e) {
-    console.error('Edit comment error:', e);
-    alert('Failed to edit comment');
-  }
-}
-
-async function deleteComment(threadId, commentIdx) {
-  if(!confirm('Are you sure you want to delete this comment?')) return;
-  
-  try {
-    const threads = await getThreadsFromDB();
-    const threadIndex = threads.findIndex(t => t.id === threadId);
-    if(threadIndex === -1 || !threads[threadIndex].comments || !threads[threadIndex].comments[commentIdx]) {
-      alert('Comment not found');
-      return;
-    }
-    
-    const comment = threads[threadIndex].comments[commentIdx];
-    const currentUser = JSON.parse(localStorage.getItem('forum_current_user') || 'null');
-    
-    if(!currentUser || currentUser.username !== comment.author) {
-      alert('You can only delete your own comments');
-      return;
-    }
-    
-    threads[threadIndex].comments.splice(commentIdx, 1);
-    await updateThreadInDB(threadId, { comments: threads[threadIndex].comments });
-    
-    // Refresh modal
-    document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
-    showThreadModal(threads[threadIndex]);
-  } catch(e) {
-    console.error('Delete comment error:', e);
-    alert('Failed to delete comment');
-  }
-}
-
-// Start immediately
-init();
-
-/* ESC closes modals */
-document.addEventListener('keydown', (e)=> { if(e.key === 'Escape'){ document.querySelectorAll('.modal-overlay.open').forEach(m=>{ m.classList.remove('open'); m.style.display='none'; }); weaponPopup.classList.add('hidden'); } });
-/* backdrop close */
-document.querySelectorAll('.modal-overlay').forEach(m=> m.addEventListener('click', (e)=> { if(e.target === m){ m.classList.remove('open'); m.style.display='none'; } }));
-
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
