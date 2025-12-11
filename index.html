@@ -2967,7 +2967,7 @@ async function showThreadModal(thread) {
         const threadIndex = threads.findIndex(t => t.id === thread.id);
         if(threadIndex !== -1) {
           if(!threads[threadIndex].comments) threads[threadIndex].comments = [];
-          threads[threadIndex].comments.push(newComment);s
+          threads[threadIndex].comments.push(newComment);
           await updateThreadInDB(thread.id, { comments: threads[threadIndex].comments });
           
           // Refresh thread data from database to ensure we have latest
