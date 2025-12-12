@@ -1152,7 +1152,24 @@ const IMAGES = {
   'G43': 'images/G43.png',
   'S XD9': 'images/S XD9.png',
   'TP9': 'images/TP9.png',
-  'Taurus Civilian': 'images/Taurus Civilian.png'
+  'Taurus Civilian': 'images/Taurus Civilian.png',
+  'GH': 'images/GH.png',
+  'G17 G': 'images/G17 G.png',
+  'G19 Flex': 'images/G19 Flex.png',
+  'G22': 'images/G22.png',
+  'MP9': 'images/MP9.png',
+  'Hellcat': 'images/Hellcat.png',
+  'XDM': 'images/XDM.png',
+  
+  /* -------------------- DRUGS -------------------- */
+  'Shrooms': 'images/Shrooms.png',
+  'Xanax': 'images/Xanax.png',
+  'Perc 20s': 'images/Perc%2020s.png',
+  'Perc 30s': 'images/Perc%2030s.png',
+  'Green': 'images/Green.png',
+  'Tris': 'images/Tris.png',
+  'Quagen': 'images/Quagen.png',
+  'Wockhardt': 'images/Wockhardt.png'
 };
 
 const FALLBACK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="240"%3E%3Crect fill="%23333" width="400" height="240"/%3E%3Ctext x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
@@ -1167,7 +1184,14 @@ const WEAPON_STATS = {
   'G43': { damage: 25, fire: 710, ammo: '9mm', magStd: 10, magExt: 20 },
   'S XD9': { damage: 25, fire: 730, ammo: '9mm', magStd: 16, magExt: 32 },
   'TP9': { damage: 25, fire: 740, ammo: '9mm', magStd: 18, magExt: 36 },
-  'Taurus Civilian': { damage: 25, fire: 720, ammo: '9mm', magStd: 15, magExt: 30 }
+  'Taurus Civilian': { damage: 25, fire: 720, ammo: '9mm', magStd: 15, magExt: 30 },
+  'GH': { damage: 26, fire: 750, ammo: '9mm', magStd: 16, magExt: 32 },
+  'G17 G': { damage: 25, fire: 770, ammo: '9mm', magStd: 17, magExt: 34 },
+  'G19 Flex': { damage: 26, fire: 760, ammo: '9mm', magStd: 15, magExt: 30 },
+  'G22': { damage: 27, fire: 680, ammo: '.40 S&W', magStd: 15, magExt: 30 },
+  'MP9': { damage: 25, fire: 800, ammo: '9mm', magStd: 30, magExt: 42 },
+  'Hellcat': { damage: 26, fire: 720, ammo: '9mm', magStd: 13, magExt: 26 },
+  'XDM': { damage: 26, fire: 740, ammo: '9mm', magStd: 16, magExt: 32 }
 };
 
 /* ---------------- DRUG PRICES ---------------- */
@@ -1194,18 +1218,25 @@ const ITEMS = {
     { name:'G43', rarity:'common', category:'Pistols', img:IMAGES['G43'] || FALLBACK },
     { name:'S XD9', rarity:'common', category:'Pistols', img:IMAGES['S XD9'] || FALLBACK },
     { name:'TP9', rarity:'common', category:'Pistols', img:IMAGES['TP9'] || FALLBACK },
-    { name:'Taurus Civilian', rarity:'common', category:'Pistols', img:IMAGES['Taurus Civilian'] || FALLBACK }
+    { name:'Taurus Civilian', rarity:'common', category:'Pistols', img:IMAGES['Taurus Civilian'] || FALLBACK },
+    { name:'GH', rarity:'common', category:'Pistols', img:IMAGES['GH'] || FALLBACK },
+    { name:'G17 G', rarity:'common', category:'Pistols', img:IMAGES['G17 G'] || FALLBACK },
+    { name:'G19 Flex', rarity:'common', category:'Pistols', img:IMAGES['G19 Flex'] || FALLBACK },
+    { name:'G22', rarity:'common', category:'Pistols', img:IMAGES['G22'] || FALLBACK },
+    { name:'MP9', rarity:'common', category:'Pistols', img:IMAGES['MP9'] || FALLBACK },
+    { name:'Hellcat', rarity:'common', category:'Pistols', img:IMAGES['Hellcat'] || FALLBACK },
+    { name:'XDM', rarity:'common', category:'Pistols', img:IMAGES['XDM'] || FALLBACK }
   ],
   drugs: [
     { name:'Weed', rarity:'common', category:'Common', img:FALLBACK },
-    { name:'Shrooms', rarity:'common', category:'Common', img:FALLBACK },
-    { name:'Xanax', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
-    { name:'Perc 20s', rarity:'uncommon', category:'Uncommon', img:FALLBACK },
-    { name:'Perc 30s', rarity:'rare', category:'Rare', img:FALLBACK },
-    { name:'Green', rarity:'rare', category:'Rare', img:FALLBACK },
-    { name:'Tris', rarity:'epic', category:'Epic', img:FALLBACK },
-    { name:'Quagen', rarity:'epic', category:'Epic', img:FALLBACK },
-    { name:'Wockhardt', rarity:'legendary', category:'Legendary', img:FALLBACK },
+    { name:'Shrooms', rarity:'common', category:'Common', img:IMAGES['Shrooms'] || FALLBACK },
+    { name:'Xanax', rarity:'uncommon', category:'Uncommon', img:IMAGES['Xanax'] || FALLBACK },
+    { name:'Perc 20s', rarity:'uncommon', category:'Uncommon', img:IMAGES['Perc 20s'] || FALLBACK },
+    { name:'Perc 30s', rarity:'rare', category:'Rare', img:IMAGES['Perc 30s'] || FALLBACK },
+    { name:'Green', rarity:'rare', category:'Rare', img:IMAGES['Green'] || FALLBACK },
+    { name:'Tris', rarity:'epic', category:'Epic', img:IMAGES['Tris'] || FALLBACK },
+    { name:'Quagen', rarity:'epic', category:'Epic', img:IMAGES['Quagen'] || FALLBACK },
+    { name:'Wockhardt', rarity:'legendary', category:'Legendary', img:IMAGES['Wockhardt'] || FALLBACK },
     { name:'PCP', rarity:'legendary', category:'Legendary', img:FALLBACK }
   ]
 };
